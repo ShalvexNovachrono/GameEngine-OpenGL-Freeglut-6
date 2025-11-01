@@ -1,17 +1,67 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
+    <Filter Include="Files">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="Files\includes">
+      <UniqueIdentifier>{35456e86-c600-405b-a8fc-ea50f6f8984b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Files\src">
+      <UniqueIdentifier>{a4875276-5ca0-42a8-98ce-7a25620f9b23}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Files\includes\GameObject">
+      <UniqueIdentifier>{bdaacb10-3528-4ca2-841c-a14942e014da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Files\src\GameObject">
+      <UniqueIdentifier>{5df1f3be-dd74-4710-82e9-ca315398be62}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="extra_math.h">
+      <Filter>Files\includes</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>Files\includes</Filter>
+    </ClInclude>
+    <ClInclude Include="r_window.h">
+      <Filter>Files\includes</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>Files\includes</Filter>
+    </ClInclude>
+    <ClInclude Include="util.h">
+      <Filter>Files\includes</Filter>
+    </ClInclude>
+    <ClInclude Include="idh.h">
+      <Filter>Files\includes</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Files\includes\GameObject</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Files\src</Filter>
+    </ClCompile>
+    <ClCompile Include="r_window.cpp">
+      <Filter>Files\src</Filter>
+    </ClCompile>
+    <ClCompile Include="callbacks.h">
+      <Filter>Files\includes</Filter>
+    </ClCompile>
+    <ClCompile Include="callbacks.cpp">
+      <Filter>Files\src</Filter>
+    </ClCompile>
+    <ClCompile Include="util.cpp">
+      <Filter>Files\src</Filter>
+    </ClCompile>
+    <ClCompile Include="idh.cpp">
+      <Filter>Files\src</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Files\src\GameObject</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

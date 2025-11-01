@@ -1,0 +1,14 @@
+#include "main.h"
+#include "r_window.h"
+
+int main(int argc, char* argv[]) {
+    LOG_DEBUG("Starting application...");
+
+    r_window* main_window = new r_window();
+
+    main_window->init(argc, argv);
+    main_window->clean_up();
+
+    delete main_window;
+    return 0;
+}
