@@ -105,24 +105,26 @@ void r_window::timer() {
 	);
 
 
+
 	if (input->get_IAxis("Vertical")) {
-		float moveAmount = input->get_IAxis("Vertical") * deltaTime * 5.0f;
-		camera.eye.z -= moveAmount;
-		camera.center.z -= moveAmount;
+		double moveAmount = input->get_IAxis("Vertical") * deltaTime * 5.0f;
+		camera.eye.z -= static_cast<float>(moveAmount);
+		camera.center.z -= static_cast<float>(moveAmount);
 	}
 
 	if (input->get_IAxis("Horizontal")) {
-		float moveAmount = input->get_IAxis("Horizontal") * deltaTime * 5.0f;
-		camera.eye.x += moveAmount;
-		camera.center.x += moveAmount;
+		double moveAmount = input->get_IAxis("Horizontal") * deltaTime * 5.0f;
+		camera.eye.x += static_cast<float>(moveAmount);
+		camera.center.x += static_cast<float>(moveAmount);
 	}
 
 	if (input->get_IAxis("Rotate")) {
-		float rotateAmount = input->get_IAxis("Rotate") * deltaTime * 50.0f;
-		WorldRotaion.y += rotateAmount;
+		double rotateAmount = input->get_IAxis("Rotate") * deltaTime * 50.0f;
+		WorldRotaion.y += static_cast<float>(rotateAmount);
 	}
 
 
+	LOG_DEBUG("\nMouse passive position:" + input->get_screen_passive_mouse_position().tostr());
 
 	glutPostRedisplay();
 }
@@ -154,10 +156,13 @@ void r_window::draw() {
 }
 
 void r_window::mouse_click(int button, int state, int x, int y) {
+	input->set_mouse_click(button, state, Vec2(static_cast<float>(x), static_cast<float>(y)));
 }
 
 void r_window::mouse_motion(int x, int y) {
+	input->set_motion_mouse_position(Vec2(static_cast<float>(x), static_cast<float>(y)));
 }
 
 void r_window::mouse_passive_motion(int x, int y) {
+	input->set_passive_mouse_position(Vec2(static_cast<float>(x), static_cast<float>(y)));
 }
