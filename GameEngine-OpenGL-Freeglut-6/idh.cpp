@@ -15,7 +15,7 @@ bool Input::is_key_down(int Key) {
     return false;
 }
 
-Input::Input(double& _DeltaTime, r_window* rw) : DeltaTime(_DeltaTime), rw(rw) {
+Input::Input(float& _DeltaTime, r_window* rw) : delta_time(_DeltaTime), rw(rw) {
     KEYs = util::array<KeyCodeData>();
     IAxis = util::array<InputAxis>();
 
@@ -68,22 +68,28 @@ bool Input::get_mouse_button(int MouseButton) {
 }
 
 bool Input::was_mouse_button_just_pressed(int MouseButton) {
-    for (size_t i = 0; i < sizeof(MouseButtonsArray) / sizeof(MouseButtonsArray[0]); i++) {
-        if (MouseButtonsArray[i].LastState == false && MouseButtonsArray[i].CurrentState == true) {
-            MouseDetails.ClickPosition = MouseDetails.Position;
-            return true;
-        }
+    if (MouseButton < 0 || MouseButton >= static_cast<int>(AmountOfMouseButton)) {
+        return false;
     }
+
+    if (MouseButtonsArray[MouseButton].LastState == false && MouseButtonsArray[MouseButton].CurrentState == true) {
+        MouseDetails.ClickPosition = MouseDetails.Position;
+        return true;
+    }
+    
     return false;
 }
 
 bool Input::was_mouse_button_just_released(int MouseButton) {
-    for (size_t i = 0; i < sizeof(MouseButtonsArray) / sizeof(MouseButtonsArray[0]); i++) {
-        if (MouseButtonsArray[i].LastState == true && MouseButtonsArray[i].CurrentState == false) {
-            MouseDetails.ClickPosition = Vec2::Zero();
-            return true;
-        }
+    if (MouseButton < 0 || MouseButton >= static_cast<int>(AmountOfMouseButton)) {
+        return false;
     }
+
+    if (MouseButtonsArray[MouseButton].LastState == true && MouseButtonsArray[MouseButton].CurrentState == false) {
+        MouseDetails.ClickPosition = Vec2::Zero();
+        return true;
+    }
+    
     return false;
 }
 
@@ -139,8 +145,8 @@ void Input::update() {
     // Update previous mouse button states
     PreviousMouseButtonStates = MouseButtonStates;
 
-    for (size_t i = 0; i < sizeof(MouseButtonsArray) / sizeof(MouseButtonsArray[0]); i++) {
-        auto MouseButton = MouseButtonsArray[i];
+    for (size_t i = 0; i < AmountOfMouseButton; i++) {
+        auto& MouseButton = MouseButtonsArray[i];
         MouseButton.LastState = MouseButton.CurrentState;
         MouseButton.CurrentState = get_mouse_button(i);
         MouseButtonsArray[i] = MouseButton;
@@ -149,7 +155,7 @@ void Input::update() {
 
     // Update key states
     for (int i = 0; i < KEYs.size(); i++) {
-        auto keyData = KEYs[i];
+        auto& keyData = KEYs[i];
         keyData.LastState = keyData.CurrentState;
         keyData.CurrentState = is_key_down(keyData.KeyCode);
         KEYs[i] = keyData;
@@ -194,11 +200,11 @@ float Input::get_IAxis(string axisName) {
                 if (is_key_down(bk.a))      pos = true;
                 else if (is_key_down(bk.b)) neg = true;
             }
-            if (pos)      axis.value += DeltaTime;
-            else if (neg) axis.value -= DeltaTime;
+            if (pos)      axis.value += delta_time;
+            else if (neg) axis.value -= delta_time;
             else if (axis.value != 0.0f) {
                 float s = (axis.value > 0.0f ? 1.0f : -1.0f);
-                axis.value -= s * DeltaTime;
+                axis.value -= s * delta_time;
                 if (std::abs(axis.value) < 0.009f) axis.value = 0.0f;
             }
 

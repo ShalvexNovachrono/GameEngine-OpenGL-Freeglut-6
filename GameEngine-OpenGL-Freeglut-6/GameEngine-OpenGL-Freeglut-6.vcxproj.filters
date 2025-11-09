@@ -63,5 +63,8 @@
     <ClCompile Include="GameObject.cpp">
       <Filter>Files\src\GameObject</Filter>
     </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>Files\src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

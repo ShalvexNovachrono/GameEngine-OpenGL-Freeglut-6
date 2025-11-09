@@ -125,6 +125,7 @@
   <ItemGroup>
     <ClCompile Include="callbacks.cpp" />
     <ClCompile Include="callbacks.h" />
+    <ClCompile Include="camera.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="idh.cpp" />
     <ClCompile Include="main.cpp" />

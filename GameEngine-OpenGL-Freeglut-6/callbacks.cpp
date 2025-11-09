@@ -24,11 +24,11 @@ namespace callbacks {
 	/// <summary>
 	/// This will constantly call the timer function of the r_window at a preferred refresh rate.
 	/// </summary>
-	/// <param name="preferredRefresh"></param>
-	void timer(int preferredRefresh) {
+	/// <param name="preferred_refresh"></param>
+	void timer(int preferred_refresh) {
 		if (rw_instance != nullptr) {
 			rw_instance->timer();
-			glutTimerFunc(preferredRefresh, callbacks::timer, preferredRefresh);
+			glutTimerFunc(preferred_refresh, callbacks::timer, preferred_refresh);
 		}
 	}
 

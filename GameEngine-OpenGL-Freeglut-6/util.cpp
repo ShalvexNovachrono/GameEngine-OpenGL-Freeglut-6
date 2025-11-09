@@ -49,7 +49,7 @@ namespace util {
 
 
         while (getline(file_stream, line)) {
-            unsigned long long char_space_pos = (line.find_first_of(' ') != string::npos) ? line.find_first_of(' ') + 1 : 0;
+            size_t char_space_pos = static_cast<size_t>((line.find_first_of(' ') != string::npos) ? line.find_first_of(' ') + 1 : 0);
             string parsed_line = line.substr(0, char_space_pos - 1);
             if (parsed_line == "v") {
                 vertex_count++;
@@ -96,8 +96,7 @@ namespace util {
                     LOG_ERROR("load_obj: Invalid vertex data.");
                 }
                 m.vertices.append(vertex);
-            }
-            else if (prefix == "vt") {
+            } else if (prefix == "vt") {
                 Vec2 uv;
                 try {
                     line_stream >> uv.x >> uv.y;
@@ -106,8 +105,7 @@ namespace util {
                     LOG_ERROR("load_obj: Invalid UV data.");
                 }
                 m.uvs.append(uv);
-            }
-            else if (prefix == "vn") {
+            } else if (prefix == "vn") {
                 Vec3 normal;
                 try {
                     line_stream >> normal.x >> normal.y >> normal.z;
@@ -116,8 +114,7 @@ namespace util {
                     LOG_ERROR("load_obj: Invalid normal data.");
                 }
                 m.normals.append(normal);
-            }
-            else if (prefix == "f") {
+            } else if (prefix == "f") {
                 string face_data_line = line.substr(2, line.size());
                 array<string> paresed_face_data = parse_obj_face_data(face_data_line);
 
@@ -178,7 +175,7 @@ namespace util {
         m_static.vn_normal_indices_count = m.vn_normal_indices.size();
 
 
-        LOG_DEBUG("\nload_obj: Loaded " + to_string(vertex_count) + " vertices, " + to_string(uv_count) + " uvs, " + to_string(normal_count) + " normals, " + to_string(face_count) + " faces from " + file_path);
+        LOG_DEBUG("load_obj: Loaded " + to_string(vertex_count) + " vertices, " + to_string(uv_count) + " uvs, " + to_string(normal_count) + " normals, " + to_string(face_count) + " faces from " + file_path);
         return m_static;
     }
 

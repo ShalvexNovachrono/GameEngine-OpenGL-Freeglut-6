@@ -76,7 +76,7 @@ public:
 
 
     //--------Constructor--------//
-    Input(double& _DeltaTime, r_window* rw);
+    Input(float& _DeltaTime, r_window* rw);
 
     /// <summary>
     /// Returns the normalized mouse position in the range [-1, 1] for both X and Y.
@@ -216,11 +216,11 @@ private:
     unordered_map<int, bool> PreviousMouseButtonStates;
     unordered_map<int, Vec2> MouseClickStartPositions;
     bool _FreezeMouseToCenter = false;
-    int AmountOfMouseButton = 3; // default value of number of butttons on mouse
+    size_t AmountOfMouseButton = 3; // the main three buttons (left, right and middle mouse button)
     KeyCodeData* MouseButtonsArray = new KeyCodeData[3];
 
-    //--------DeltaTime&Engine--------//
-    double& DeltaTime;
+    //--------DeltaTime&Window--------//
+    float& delta_time;
     r_window* rw;
 };
 

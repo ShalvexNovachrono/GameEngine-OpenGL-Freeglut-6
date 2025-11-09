@@ -5,37 +5,40 @@
 
 util::static_mesh loaded_mesh;
 
-r_window::r_window(int width, int height, const char* title) {
+r_window::r_window(int width, int height, string title) {
     this->width = width;
     this->height = height;
     this->title = title;
 }
 
 void r_window::init(int argc, char* argv[]) {
-	camera = Camera();
-    camera.eye = Vec3(0, 0, 5); // Camera position
-    camera.center = Vec3(0, 0, 0);  // Point the camera is looking at
-    camera.up = Vec3(0, 1, 0);
 
 	loaded_mesh = util::load_obj("assets/bunny.obj");
 
-	input = new Input(deltaTime, this);
+	#pragma region Setup Input
+		input = new Input(delta_time, this);
 
-	Input::InputAxis VerticalAxis("Vertical");
-	VerticalAxis.add_key('W', 'S');
-	VerticalAxis.add_key(VK_UP, VK_DOWN);
+		Input::InputAxis VerticalAxis("Vertical");
+		VerticalAxis.add_key('W', 'S');
+		VerticalAxis.add_key(VK_UP, VK_DOWN);
 
-	Input::InputAxis HorizontalAxis("Horizontal");
-	HorizontalAxis.add_key('A', 'D');
-	HorizontalAxis.add_key(VK_LEFT, VK_RIGHT);
+		Input::InputAxis HorizontalAxis("Horizontal");
+		HorizontalAxis.add_key('A', 'D');
+		HorizontalAxis.add_key(VK_LEFT, VK_RIGHT);
 
-	Input::InputAxis RotateAxis("Rotate");
-	RotateAxis.add_key('R', 'T');
+		Input::InputAxis RotateAxis("Rotate");
+		RotateAxis.add_key('R', 'T');
+
+		input->add_IAxis(VerticalAxis);
+		input->add_IAxis(HorizontalAxis);
+		input->add_IAxis(RotateAxis);
 
 
-	input->add_IAxis(VerticalAxis);
-	input->add_IAxis(HorizontalAxis);
-	input->add_IAxis(RotateAxis);
+		input->add_key(VK_ESCAPE);
+		input->add_key('L');
+	#pragma endregion
+
+	camera = new Camera(this);
 
 	callbacks::init(this);
 
@@ -43,7 +46,7 @@ void r_window::init(int argc, char* argv[]) {
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
 
 	glutInitWindowSize(width, height);
-	glutCreateWindow(title);
+	glutCreateWindow(title.c_str());
 
 
 	glutDisplayFunc(callbacks::display);
@@ -57,7 +60,7 @@ void r_window::init(int argc, char* argv[]) {
 	glLoadIdentity();
 
 	glViewport(0, 0, width, height);
-	gluPerspective(fov, width / height, 1, 1800);
+	gluPerspective(fov, width / height, 0.1, 1800);
 	glMatrixMode(GL_MODELVIEW);
 
 
@@ -74,18 +77,20 @@ void r_window::init(int argc, char* argv[]) {
 }
 
 void r_window::clean_up() {
+	delete input;
+	delete camera;
 }
 
 void r_window::timer() {
-	currentFrame = (float)glutGet(GLUT_ELAPSED_TIME);              // seconds
-	systemDeltaTime = (currentFrame - lastFrame) / 1000.0f;
-	if (systemDeltaTime <= 0.0) systemDeltaTime = 1e-6;
-	deltaTime = timeScale * systemDeltaTime;
-	lastFrame = currentFrame;
-	fps = static_cast<int>(1.0 / systemDeltaTime);
+	current_frame = (float)glutGet(GLUT_ELAPSED_TIME);              // seconds
+	system_delta_time = (current_frame - last_frame) / 1000.0f;
+	if (system_delta_time <= 0.0f) system_delta_time = 1e-6f;
+	delta_time = time_scale * system_delta_time;
+	last_frame = current_frame;
+	fps = static_cast<int>(1.0f / system_delta_time);
 
 	//-------Debug-Info-------//
-	LOG_DEBUG_R("FPS: " + to_string(fps) + " | Delta Time: " + to_string(deltaTime) + " | System Delta Time: " + to_string(systemDeltaTime));
+	LOG_DEBUG_R("FPS: " + to_string(fps) + " | Delta Time: " + to_string(delta_time) + " | System Delta Time: " + to_string(system_delta_time));
 	//-------End-------//
 
 	input->update();
@@ -93,38 +98,20 @@ void r_window::timer() {
 	glLoadIdentity();
 
 	gluLookAt(
-		camera.eye.x,
-		camera.eye.y,
-		camera.eye.z,
-		camera.center.x,
-		camera.center.y,
-		camera.center.z,
-		camera.up.x,
-		camera.up.y,
-		camera.up.z
+		camera->eye.x,
+		camera->eye.y,
+		camera->eye.z,
+		camera->center().x,
+		camera->center().y,
+		camera->center().z,
+		camera->up.x,
+		camera->up.y,
+		camera->up.z
 	);
 
 
-
-	if (input->get_IAxis("Vertical")) {
-		double moveAmount = input->get_IAxis("Vertical") * deltaTime * 5.0f;
-		camera.eye.z -= static_cast<float>(moveAmount);
-		camera.center.z -= static_cast<float>(moveAmount);
-	}
-
-	if (input->get_IAxis("Horizontal")) {
-		double moveAmount = input->get_IAxis("Horizontal") * deltaTime * 5.0f;
-		camera.eye.x += static_cast<float>(moveAmount);
-		camera.center.x += static_cast<float>(moveAmount);
-	}
-
-	if (input->get_IAxis("Rotate")) {
-		double rotateAmount = input->get_IAxis("Rotate") * deltaTime * 50.0f;
-		WorldRotaion.y += static_cast<float>(rotateAmount);
-	}
-
-
-	LOG_DEBUG("\nMouse passive position:" + input->get_screen_passive_mouse_position().tostr());
+	camera->update();
+	
 
 	glutPostRedisplay();
 }
@@ -165,4 +152,8 @@ void r_window::mouse_motion(int x, int y) {
 
 void r_window::mouse_passive_motion(int x, int y) {
 	input->set_passive_mouse_position(Vec2(static_cast<float>(x), static_cast<float>(y)));
+}
+
+Input& r_window::get_input_reference() {
+	return *input;
 }

@@ -8,10 +8,9 @@
 
 class r_window {
 public:
-	Camera camera;
+	Camera* camera;
 
-	r_window() = default;
-	r_window(int width, int height, const char* title);
+	r_window(int width, int height, string title);
 	~r_window() = default;
 
 	void init(int argc, char* argv[]);
@@ -28,13 +27,13 @@ public:
 
 	void mouse_passive_motion(int x, int y);
 
-	double get_delta_time() const { return deltaTime; }
+	float get_delta_time() const { return delta_time; }
 
-	double get_system_delta_time() const { return systemDeltaTime; }
+	float get_system_delta_time() const { return system_delta_time; }
 
-	double get_time_scale() const { return timeScale; }
+	float get_time_scale() const { return time_scale; }
 
-	void set_time_scale(double scale) { timeScale = scale; }
+	void set_time_scale(float scale) { time_scale = scale; }
 
 	int get_fps() const { return fps; }
 
@@ -43,15 +42,17 @@ public:
 	Vec2 get_window_size() const { return Vec2(static_cast<float>(width), static_cast<float>(height)); }
 
 	Vec2 get_window_position() const { return Vec2(static_cast<float>(glutGet(GLUT_WINDOW_X)), static_cast<float>(glutGet(GLUT_WINDOW_Y))); }
-private:
-    int width = 800, height = 600;
-    const char* title = "Shalvex Novachrono's OpenGL Window";
 
-    double deltaTime = 0.0f;
-    double systemDeltaTime = 0.0f;
-    double lastFrame = 0.0f;
-    double timeScale = 1.0f;
-    double currentFrame = 0.0f;
+	Input& get_input_reference();
+private:
+    int width = 100, height = 100;
+    string title;
+
+    float delta_time = 0.0f;
+	float system_delta_time = 0.0f;
+	float last_frame = 0.0f;
+	float time_scale = 1.0f;
+	float current_frame = 0.0f;
     int fps = 0;
 
 	const float fov = 45.0f;

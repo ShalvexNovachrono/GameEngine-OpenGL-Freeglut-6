@@ -8,6 +8,14 @@ using namespace std;
 
 constexpr float pi = 3.1415926f;
 
+static float degrees_to_radians(float degrees) {
+    return degrees * (pi / 180);
+}
+
+static float radians_to_degrees(float radians) {
+    return radians * (180 / pi);
+}
+
 /// <summary>
 /// This function clamps a value between a minimum and maximum value.
 /// </summary>
@@ -288,6 +296,14 @@ struct Vec2 {
         return pointA.x * pointB.x + pointA.y * pointB.y;
     }
 
+    float Cross(Vec2 const& other) {
+        return (x * other.y) - (y * other.x);
+    }
+
+    static float Cross(Vec2 const& a, Vec2 const& b) {
+        return (a.x * b.y) - (a.y * b.x);
+    }
+
     friend ostream& operator<<(ostream& os, const Vec2& value) {
         os << "Vector2(" << value.x << ", " << value.y << ")";
         return os;
@@ -489,6 +505,22 @@ struct Vec3 {
 
     static float Dot(Vec3 const& pointA, Vec3 const& pointB) {
         return pointA.x * pointB.x + pointA.y * pointB.y + pointA.z * pointB.z;
+    }
+
+    Vec3 Cross(Vec3 const& other) {
+        return {
+            (y * other.z) - (z * other.y),
+            (z * other.x) - (x * other.z),
+            (x * other.y) - (y * other.x)
+        };
+    }
+
+    static Vec3 Cross(Vec3 const& a, Vec3 const& b) {
+        return {
+            (a.y * b.z) - (a.z * b.y),
+            (a.z * b.x) - (a.x * b.z),
+            (a.x * b.y) - (a.y * b.x)
+        };
     }
 
     friend ostream& operator<<(ostream& os, const Vec3& value) {
