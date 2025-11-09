@@ -9,11 +9,11 @@ using namespace std;
 constexpr float pi = 3.1415926f;
 
 static float degrees_to_radians(float degrees) {
-    return degrees * (pi / 180);
+    return degrees * (pi / 180.0f);
 }
 
 static float radians_to_degrees(float radians) {
-    return radians * (180 / pi);
+    return radians * (180.0f / pi);
 }
 
 /// <summary>

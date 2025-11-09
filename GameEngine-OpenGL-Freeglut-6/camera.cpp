@@ -20,12 +20,12 @@ Camera::Camera(r_window* rw) : rw(rw), input(rw->get_input_reference()) {
 
 void Camera::update() {
     if (input.was_key_just_pressed('F')) {
-        input.freeze_mouse_to_center(freeze_toggle_mouse);
         freeze_toggle_mouse = !freeze_toggle_mouse;
+        input.freeze_mouse_to_center(freeze_toggle_mouse);
     }
 
     if (input.was_key_just_pressed('H')) {
-        hide_toggle_mouse = !hide_toggle_mouse;
+        hide_toggle_mouse = !hide_toggle_mouse; 
         input.show_mouse(hide_toggle_mouse);
     }
 
@@ -45,50 +45,51 @@ void Camera::update() {
         eye -= front * speed * rw->get_delta_time();
     }
 
-    if (input.is_key_down('A')) {
-        eye -= Vec3::Cross(front, up).Normalize() * speed * rw->get_delta_time();
-    }
+    Vec3 right = Vec3::Cross(front, up).Normalize();
 
-    if (input.is_key_down('D')) {
-        eye += Vec3::Cross(front, up).Normalize() * speed * rw->get_delta_time();
-    }
+    if (input.is_key_down('A')) eye -= right * speed * rw->get_delta_time();
+
+    if (input.is_key_down('D')) eye += right * speed * rw->get_delta_time();
 
 #pragma endregion
 
 #pragma region Rotation
-    
     if (input.get_mouse_button(2)) {
         Vec2 mouse_position = input.get_screen_motion_mouse_position();
+
         if (first_mouse_focus) {
             last_x_position = mouse_position.x;
             last_y_position = mouse_position.y;
             first_mouse_focus = false;
         }
 
-
         float x_offset = mouse_position.x - last_x_position;
         float y_offset = last_y_position - mouse_position.y;
+
+        last_x_position = mouse_position.x;
+        last_y_position = mouse_position.y;
 
         x_offset *= rotation_sensitivity;
         y_offset *= rotation_sensitivity;
 
-        yaw   += x_offset;
+        yaw += x_offset;
         pitch += y_offset;
 
-        if (pitch > 89.0f)
-            pitch = 89.0f;
-        if (pitch < -89.0f)
-            pitch = -89.0f;
+        if (yaw > 360.0f) yaw -= 360.0f;
+        else if (yaw < -360.0f) yaw += 360.0f;
+
+        pitch = extra_math_h::clamp(pitch, -89.0f, 89.0f);
+
+        float yaw_r = degrees_to_radians(yaw);
+        float pitch_r = degrees_to_radians(pitch);
 
         Vec3 direction = Vec3::Zero();
+        direction.x = cosf(yaw_r) * cosf(pitch_r);
+        direction.y = sinf(pitch_r);
+        direction.z = sinf(yaw_r) * cosf(pitch_r);
 
-        direction.x = cos(degrees_to_radians(yaw)) * cos(degrees_to_radians(pitch));
-        direction.y = sin(degrees_to_radians(pitch));
-        direction.z = sin(degrees_to_radians(yaw)) * cos(degrees_to_radians(pitch));
-
-        LOG_DEBUG_R("\n" + direction.tostr() );
         front = direction.Normalize();
+        LOG_DEBUG("\n" + front.tostr());
     }
-
 #pragma endregion
 }

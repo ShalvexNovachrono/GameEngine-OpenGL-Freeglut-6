@@ -20,7 +20,7 @@ private:
 public:
 	Vec3 eye, up, front;
 	float movement_speed = 0.5f;
-	float rotation_sensitivity = 0.0005f;
+	float rotation_sensitivity = 0.1f;
 	bool first_mouse_focus = true;
 
 	Camera(r_window* rw);

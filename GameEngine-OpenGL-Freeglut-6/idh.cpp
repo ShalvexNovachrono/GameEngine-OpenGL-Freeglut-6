@@ -25,7 +25,7 @@ Input::Input(float& _DeltaTime, r_window* rw) : delta_time(_DeltaTime), rw(rw) {
 }
 
 Vec2 Input::get_mouse_position() {
-    Vec2 WindowCenterPosition = rw->get_window_size();
+    /*Vec2 WindowCenterPosition = rw->get_window_size();
 
     if (WindowCenterPosition.x == 0 || WindowCenterPosition.y == 0) {
         return Vec2(0, 0);
@@ -33,10 +33,21 @@ Vec2 Input::get_mouse_position() {
     WindowCenterPosition = WindowCenterPosition / 2;
     Vec2 MousePosition = get_screen_passive_mouse_position() - WindowCenterPosition;
 
-    return Vec2(MousePosition.x / WindowCenterPosition.x, (MousePosition.y / WindowCenterPosition.y) * -1);
+    return Vec2(MousePosition.x / WindowCenterPosition.x, (MousePosition.y / WindowCenterPosition.y) * -1);*/
+
+    bool is_pressing = false;
+
+    for (size_t i = 0; i < AmountOfMouseButton; i++) {
+        if (MouseButtonsArray[i].LastState == false && MouseButtonsArray[i].CurrentState == true) {
+            is_pressing = true;
+            break;
+        }
+    }
+
+    return (is_pressing) ? MouseDetails.MotionPosition : MouseDetails.PassiveMotionPosition;
 }
 
-Vec2 Input::get_angle_from_mouse_position_to_angle() {
+/*Vec2 Input::get_angle_from_mouse_position_to_angle() {
     Vec2 WindowSize = rw->get_window_size();
     Vec2 RelativePosition = get_mouse_position();
     RelativePosition.y *= -1;
@@ -45,7 +56,7 @@ Vec2 Input::get_angle_from_mouse_position_to_angle() {
     float HorizontalAngle = RelativePosition.x * (rw->get_fov() * 0.5f);
     float VerticalAngle = RelativePosition.y * (rw->get_fov() * 0.5f * (WindowSize.y / WindowSize.x));
     return Vec2(HorizontalAngle, VerticalAngle);
-}
+}*/ 
 
 Vec2 Input::get_screen_mouse_position() {
     return MouseDetails.Position;
@@ -111,6 +122,17 @@ void Input::set_mouse_click(int Button, int State, Vec2 Position) {
 
 void Input::set_motion_mouse_position(Vec2 Position) {
     MouseDetails.MotionPosition = Position;
+
+    if (_FreezeMouseToCenter) {
+        Vec2 WindowPos = rw->get_window_position();
+        Vec2 WindowSize = rw->get_window_size();
+        int CenterX = (int)(WindowPos.x + WindowSize.x / 2);
+        int CenterY = (int)(WindowPos.y + WindowSize.y / 2);
+
+        if (abs(Position.x - CenterX) > 1 || abs(Position.y - CenterY) > 1) {
+            SetCursorPos(CenterX, CenterY);
+        }
+    }
 }
 
 void Input::set_passive_mouse_position(Vec2 Position) {

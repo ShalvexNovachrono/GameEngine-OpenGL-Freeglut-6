@@ -94,6 +94,7 @@ void r_window::timer() {
 	//-------End-------//
 
 	input->update();
+	camera->update();
 
 	glLoadIdentity();
 
@@ -108,10 +109,6 @@ void r_window::timer() {
 		camera->up.y,
 		camera->up.z
 	);
-
-
-	camera->update();
-	
 
 	glutPostRedisplay();
 }

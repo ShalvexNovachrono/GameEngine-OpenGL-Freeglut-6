@@ -79,11 +79,9 @@ public:
     Input(float& _DeltaTime, r_window* rw);
 
     /// <summary>
-    /// Returns the normalized mouse position in the range [-1, 1] for both X and Y.
-    /// The Y-axis is flipped so that +Y is up.
-    /// This value updates continuously with mouse movement.
+    /// Returns the mouse position
     /// </summary>
-    /// <returns>Vec2 in normalized coordinates.</returns>
+    /// <returns>Vec2 coordinates.</returns>
     Vec2 get_mouse_position();
 
     /// <summary>
@@ -92,7 +90,7 @@ public:
     /// Uses the engine's field of view (FOV) and window aspect ratio for scaling.
     /// </summary>
     /// <returns>Vec2 containing horizontal and vertical angles in degrees.</returns>
-    Vec2 get_angle_from_mouse_position_to_angle();
+    //Vec2 get_angle_from_mouse_position_to_angle();
 
     /// <summary>
     /// Returns the mouse position in screen coordinates (0 to window size).
