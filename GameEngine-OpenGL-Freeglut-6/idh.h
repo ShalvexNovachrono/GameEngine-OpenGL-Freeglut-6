@@ -51,9 +51,9 @@ public:
     //--------Input-Axis--------//
     class BIPolarKeys {
     public:
-        char a, b;
+        int a, b;
 
-        BIPolarKeys(char a = 0, char b = 0) : a(a), b(b) {};
+        BIPolarKeys(int a = 0, int b = 0) : a(a), b(b) {};
 
     };
 
@@ -66,7 +66,7 @@ public:
             this->AxisName = AxisName;
         }
 
-        void add_key(char Key1, char Key2) {
+        void add_key(int Key1, int Key2) {
             BIKeys.append(BIPolarKeys(Key1, Key2));
         }
     };
@@ -77,20 +77,13 @@ public:
 
     //--------Constructor--------//
     Input(float& _DeltaTime, r_window* rw);
+    ~Input();
 
     /// <summary>
     /// Returns the mouse position
     /// </summary>
     /// <returns>Vec2 coordinates.</returns>
     Vec2 get_mouse_position();
-
-    /// <summary>
-    /// Calculates the horizontal and vertical angular offsets from the center of
-    /// the screen to the current mouse position.
-    /// Uses the engine's field of view (FOV) and window aspect ratio for scaling.
-    /// </summary>
-    /// <returns>Vec2 containing horizontal and vertical angles in degrees.</returns>
-    //Vec2 get_angle_from_mouse_position_to_angle();
 
     /// <summary>
     /// Returns the mouse position in screen coordinates (0 to window size).
@@ -153,13 +146,6 @@ public:
     /// <summary>
     /// Checks if [Key] is pressed and RETURNS true or false
     /// </summary>
-    /// <param name="key">char</param>
-    /// <returns>bool</returns>
-    bool is_key_down(char Key);
-
-    /// <summary>
-    /// Checks if [Key] is pressed and RETURNS true or false
-    /// </summary>
     /// <param name="key">int</param>
     /// <returns>bool</returns>
     bool is_key_down(int Key);
@@ -176,7 +162,7 @@ public:
     /// </summary>
     /// <param name="Key">The key to check.</param>
     /// <returns>True if the key was just released this frame; otherwise, false.</returns>
-    bool was_key_just_released(char Key);
+    bool was_key_just_released(int Key);
 
     /// <summary>
     /// Returns true only on the frame when the specified key is pressed (i.e., transitions from not pressed to pressed).
@@ -184,14 +170,14 @@ public:
     /// </summary>
     /// <param name="Key">The key to check.</param>
     /// <returns>True if the key was just pressed this frame; otherwise, false.</returns>
-    bool was_key_just_pressed(char Key);
+    bool was_key_just_pressed(int Key);
 
     /// <summary>
     /// Adds a key to the list of tracked keys for input state monitoring.
     /// Call this before using WasKeyJustPressed or WasKeyJustReleased for a key.
     /// </summary>
     /// <param name="Key">The key to start tracking.</param>
-    void add_key(char Key);
+    void add_key(int Key);
 
     /// <summary>
     /// This function will add the iaxis to a dynamic_array
@@ -215,7 +201,7 @@ private:
     unordered_map<int, Vec2> MouseClickStartPositions;
     bool _FreezeMouseToCenter = false;
     size_t AmountOfMouseButton = 3; // the main three buttons (left, right and middle mouse button)
-    KeyCodeData* MouseButtonsArray = new KeyCodeData[3];
+    KeyCodeData* MouseButtonsArray = nullptr;
 
     //--------DeltaTime&Window--------//
     float& delta_time;

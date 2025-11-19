@@ -17,6 +17,9 @@
     <Filter Include="Files\src\GameObject">
       <UniqueIdentifier>{5df1f3be-dd74-4710-82e9-ca315398be62}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Files\assets">
+      <UniqueIdentifier>{3c9f027a-1e86-4e5a-84cc-3eec3a4b379d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="extra_math.h">

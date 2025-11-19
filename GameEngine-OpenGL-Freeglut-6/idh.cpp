@@ -1,13 +1,6 @@
 #include "idh.h"
 #include "r_window.h"
 
-bool Input::is_key_down(char Key) {
-    if (GetAsyncKeyState(Key) & 0x8000) {
-        return true;
-    }
-    return false;
-}
-
 bool Input::is_key_down(int Key) {
     if (GetAsyncKeyState(Key) & 0x8000) {
         return true;
@@ -21,7 +14,11 @@ Input::Input(float& _DeltaTime, r_window* rw) : delta_time(_DeltaTime), rw(rw) {
 
 
     // in the future i should probably try getting all the buttons of the mouse 
-    MouseButtonsArray = new KeyCodeData[AmountOfMouseButton];
+    MouseButtonsArray = new KeyCodeData[3];
+}
+
+Input::~Input() {
+	delete[] MouseButtonsArray;
 }
 
 Vec2 Input::get_mouse_position() {
@@ -46,17 +43,6 @@ Vec2 Input::get_mouse_position() {
 
     return (is_pressing) ? MouseDetails.MotionPosition : MouseDetails.PassiveMotionPosition;
 }
-
-/*Vec2 Input::get_angle_from_mouse_position_to_angle() {
-    Vec2 WindowSize = rw->get_window_size();
-    Vec2 RelativePosition = get_mouse_position();
-    RelativePosition.y *= -1;
-    float DirectionAngle = atan2(RelativePosition.y, RelativePosition.x) * (180.0f / extra_math_h::pi);
-    float Distance = sqrt(RelativePosition.x * RelativePosition.x + RelativePosition.y * RelativePosition.y);
-    float HorizontalAngle = RelativePosition.x * (rw->get_fov() * 0.5f);
-    float VerticalAngle = RelativePosition.y * (rw->get_fov() * 0.5f * (WindowSize.y / WindowSize.x));
-    return Vec2(HorizontalAngle, VerticalAngle);
-}*/ 
 
 Vec2 Input::get_screen_mouse_position() {
     return MouseDetails.Position;
@@ -184,7 +170,7 @@ void Input::update() {
     }
 }
 
-bool Input::was_key_just_released(char Key) {
+bool Input::was_key_just_released(int Key) {
     for (int i = 0; i < KEYs.size(); i++) {
         if (Key == KEYs[i].KeyCode && KEYs[i].LastState == true && KEYs[i].CurrentState == false) {
             return true;
@@ -193,7 +179,7 @@ bool Input::was_key_just_released(char Key) {
     return false;
 }
 
-bool Input::was_key_just_pressed(char Key) {
+bool Input::was_key_just_pressed(int Key) {
     for (int i = 0; i < KEYs.size(); i++) {
         if (Key == KEYs[i].KeyCode && KEYs[i].LastState == false && KEYs[i].CurrentState == true) {
             return true;
@@ -202,7 +188,7 @@ bool Input::was_key_just_pressed(char Key) {
     return false;
 }
 
-void Input::add_key(char Key) {
+void Input::add_key(int Key) {
     KeyCodeData KD = KeyCodeData();
     KD.set_key(Key);
     KEYs.append(KD);
@@ -227,10 +213,10 @@ float Input::get_IAxis(string axisName) {
             else if (axis.value != 0.0f) {
                 float s = (axis.value > 0.0f ? 1.0f : -1.0f);
                 axis.value -= s * delta_time;
-                if (std::abs(axis.value) < 0.009f) axis.value = 0.0f;
+                if (abs(axis.value) < 0.009f) axis.value = 0.0f;
             }
 
-            axis.value = extra_math_h::clamp(axis.value, -1.0f, 1.0f);
+            axis.value = clamp(axis.value, -1.0f, 1.0f);
             return axis.value;
         }
     }

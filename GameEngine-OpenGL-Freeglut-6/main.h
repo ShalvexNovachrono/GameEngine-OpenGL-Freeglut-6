@@ -32,6 +32,9 @@ using namespace std;
 #define LOG_DEBUG_R(message) cout << "\r" << MAKE_STRING_GREEN("[LOGGING] " + string(message)) << flush
 #define LOG_WARNING(message) cerr << MAKE_STRING_YELLOW("[WARNING] " + string(message)) << "\n"
 #define LOG_ERROR(message) { cerr << MAKE_STRING_RED("[ERROR] " + string(message)) << "\n"; exit(EXIT_FAILURE); }
+#define print(message) cout << message << "\n"
+
+
 
 inline int count_reoccurrence(const string& s, const char ch) {
     return count_if(s.begin(), s.end(), [=](const char c) { return c == ch; });

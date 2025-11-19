@@ -78,7 +78,7 @@ void Camera::update() {
         if (yaw > 360.0f) yaw -= 360.0f;
         else if (yaw < -360.0f) yaw += 360.0f;
 
-        pitch = extra_math_h::clamp(pitch, -89.0f, 89.0f);
+        pitch = clamp(pitch, -89.0f, 89.0f);
 
         float yaw_r = degrees_to_radians(yaw);
         float pitch_r = degrees_to_radians(pitch);
