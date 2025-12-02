@@ -11,8 +11,7 @@ private:
 	r_window* rw;
 	Input& input;
 
-	float last_x_position = 0, last_y_position = 0;
-	float yaw = 0, pitch = 0;
+	float yaw = -90, pitch = 0;
 
 	bool freeze_toggle_mouse = false;
 	bool hide_toggle_mouse = false;

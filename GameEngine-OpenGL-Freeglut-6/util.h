@@ -5,6 +5,7 @@
 
 using namespace std;
 
+
 namespace util {
 
     /// @brief Reads the entire content of a text file and returns it as a string.
@@ -182,4 +183,64 @@ namespace util {
     bool valid_index(int index, int size);
 
     void insert_item_in_array(int start_index, array<unsigned int>& indices, const array<string>& face_indices, int size);
+
+
+    class texture_data {
+    public:
+        texture_data() = default;
+        ~texture_data() {
+            if (loaded && id != 0) {
+                glDeleteTextures(1, &id);
+            }
+        }
+
+        texture_data(const texture_data&) = delete;
+        texture_data& operator=(const texture_data&) = delete;
+
+        texture_data(texture_data&& other) noexcept {
+            id = other.id;
+            width = other.width;
+            height = other.height;
+            loaded = other.loaded;
+
+            other.id = 0;
+            other.width = 0;
+            other.height = 0;
+            other.loaded = false;
+        }
+
+        texture_data& operator=(texture_data&& other) noexcept {
+            if (this != &other) {
+                if (loaded && id != 0) {
+                    glDeleteTextures(1, &id);
+                }
+
+                id = other.id;
+                width = other.width;
+                height = other.height;
+                loaded = other.loaded;
+
+                other.id = 0;
+                other.width = 0;
+                other.height = 0;
+                other.loaded = false;
+            }
+            return *this;
+        }
+
+        bool loadTexture(const char* path);
+
+        int getWidth();
+        int getHeight();
+
+        bool isLoaded();
+
+    private:
+        GLuint id = 0;
+        int width = 0;
+        int height = 0;
+        bool loaded = false;
+    };
+
+
 }

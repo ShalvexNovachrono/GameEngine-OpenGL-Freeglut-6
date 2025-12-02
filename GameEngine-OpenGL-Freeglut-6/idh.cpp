@@ -1,156 +1,160 @@
 #include "idh.h"
 #include "r_window.h"
 
-bool Input::is_key_down(char Key) {
+bool Input::isKeyDown(char Key) {
     if (GetAsyncKeyState(Key) & 0x8000) {
         return true;
     }
     return false;
 }
 
-bool Input::is_key_down(int Key) {
+bool Input::isKeyDown(int Key) {
     if (GetAsyncKeyState(Key) & 0x8000) {
         return true;
     }
     return false;
 }
 
-Input::Input(float& _DeltaTime, r_window* rw) : delta_time(_DeltaTime), rw(rw) {
+Input::Input(float& _DeltaTime, r_window* rw) : deltaTime(_DeltaTime), rw(rw) {
     KEYs = util::array<KeyCodeData>();
     IAxis = util::array<InputAxis>();
 
+    lastMousePosition = getMousePosition();
 
     // in the future i should probably try getting all the buttons of the mouse 
-    MouseButtonsArray = new KeyCodeData[AmountOfMouseButton];
+    mouseButtonsArray = new KeyCodeData[amountOfMouseButton];
 }
 
-Vec2 Input::get_mouse_position() {
-    /*Vec2 WindowCenterPosition = rw->get_window_size();
-
-    if (WindowCenterPosition.x == 0 || WindowCenterPosition.y == 0) {
-        return Vec2(0, 0);
-    }
-    WindowCenterPosition = WindowCenterPosition / 2;
-    Vec2 MousePosition = get_screen_passive_mouse_position() - WindowCenterPosition;
-
-    return Vec2(MousePosition.x / WindowCenterPosition.x, (MousePosition.y / WindowCenterPosition.y) * -1);*/
-
+Vec2 Input::getMousePosition() {
     bool is_pressing = false;
 
-    for (size_t i = 0; i < AmountOfMouseButton; i++) {
-        if (MouseButtonsArray[i].LastState == false && MouseButtonsArray[i].CurrentState == true) {
+    for (size_t i = 0; i < amountOfMouseButton; i++) {
+        if (mouseButtonsArray[i].currentState == true) {
             is_pressing = true;
             break;
         }
     }
 
-    return (is_pressing) ? MouseDetails.MotionPosition : MouseDetails.PassiveMotionPosition;
+    return (is_pressing) ? mouseDetails.motionPosition : mouseDetails.passiveMotionPosition;
 }
 
-/*Vec2 Input::get_angle_from_mouse_position_to_angle() {
-    Vec2 WindowSize = rw->get_window_size();
-    Vec2 RelativePosition = get_mouse_position();
-    RelativePosition.y *= -1;
-    float DirectionAngle = atan2(RelativePosition.y, RelativePosition.x) * (180.0f / extra_math_h::pi);
-    float Distance = sqrt(RelativePosition.x * RelativePosition.x + RelativePosition.y * RelativePosition.y);
-    float HorizontalAngle = RelativePosition.x * (rw->get_fov() * 0.5f);
-    float VerticalAngle = RelativePosition.y * (rw->get_fov() * 0.5f * (WindowSize.y / WindowSize.x));
-    return Vec2(HorizontalAngle, VerticalAngle);
-}*/ 
-
-Vec2 Input::get_screen_mouse_position() {
-    return MouseDetails.Position;
+Vec2 Input::getScreenMousePosition() {
+    return mouseDetails.position;
 }
 
-Vec2 Input::get_screen_motion_mouse_position() {
-    return MouseDetails.MotionPosition;
+Vec2 Input::getScreenMotionMousePosition() {
+    return mouseDetails.motionPosition;
 }
 
-Vec2 Input::get_screen_passive_mouse_position() {
-    return MouseDetails.PassiveMotionPosition;
+Vec2 Input::getScreenPassiveMousePosition() {
+    return mouseDetails.passiveMotionPosition;
 }
 
-bool Input::get_mouse_button(int MouseButton) {
-    auto it = MouseButtonStates.find(MouseButton);
-    if (it != MouseButtonStates.end()) {
+Vec2 Input::getMouseDelta() {
+    Vec2 CurrentPosition = getMousePosition();
+
+    Vec2 Difference = CurrentPosition - lastMousePosition;
+
+    lastMousePosition = CurrentPosition;
+
+    return Difference;
+}
+
+int Input::getMouseScroll() {
+    int direction = mouseDetails.scrollWheel.scrollDirection;
+
+    mouseDetails.scrollWheel.scrollDirection = 0;
+
+    return direction;
+}
+
+bool Input::getMouseButton(int MouseButton) {
+    auto it = mouseButtonStates.find(MouseButton);
+    if (it != mouseButtonStates.end()) {
         return it->second;
     }
     return false;
 }
 
-bool Input::was_mouse_button_just_pressed(int MouseButton) {
-    if (MouseButton < 0 || MouseButton >= static_cast<int>(AmountOfMouseButton)) {
+bool Input::wasMouseButtonJustPressed(int MouseButton) {
+    if (MouseButton < 0 || MouseButton >= static_cast<int>(amountOfMouseButton)) {
         return false;
     }
 
-    if (MouseButtonsArray[MouseButton].LastState == false && MouseButtonsArray[MouseButton].CurrentState == true) {
-        MouseDetails.ClickPosition = MouseDetails.Position;
+    if (mouseButtonsArray[MouseButton].lastState == false && mouseButtonsArray[MouseButton].currentState == true) {
+        mouseDetails.clickPosition = mouseDetails.position;
         return true;
     }
     
     return false;
 }
 
-bool Input::was_mouse_button_just_released(int MouseButton) {
-    if (MouseButton < 0 || MouseButton >= static_cast<int>(AmountOfMouseButton)) {
+bool Input::wasMouseButtonJustReleased(int MouseButton) {
+    if (MouseButton < 0 || MouseButton >= static_cast<int>(amountOfMouseButton)) {
         return false;
     }
 
-    if (MouseButtonsArray[MouseButton].LastState == true && MouseButtonsArray[MouseButton].CurrentState == false) {
-        MouseDetails.ClickPosition = Vec2::Zero();
+    if (mouseButtonsArray[MouseButton].lastState == true && mouseButtonsArray[MouseButton].currentState == false) {
+        mouseDetails.clickPosition = Vec2::Zero();
         return true;
     }
     
     return false;
 }
 
-Vec2 Input::get_on_click_location() {
-    return MouseDetails.ClickPosition;
+Vec2 Input::getOnClickLocation() {
+    return mouseDetails.clickPosition;
 }
 
-void Input::set_mouse_click(int Button, int State, Vec2 Position) {
-    MouseDetails.Position = Position;
+void Input::setMouseClick(int Button, int State, Vec2 position) {
+    mouseDetails.position = position;
     bool isPressed = (State == GLUT_DOWN);
 
     // Store the click start position when button is first pressed
-    if (isPressed && !get_mouse_button(Button)) {
-        MouseClickStartPositions[Button] = Position;
+    if (isPressed && !getMouseButton(Button)) {
+        mouseClickStartPositions[Button] = position;
     }
 
-    MouseButtonStates[Button] = isPressed;
+    mouseButtonStates[Button] = isPressed;
 }
 
-void Input::set_motion_mouse_position(Vec2 Position) {
-    MouseDetails.MotionPosition = Position;
+void Input::setMotionMousePosition(Vec2 position) {
 
-    if (_FreezeMouseToCenter) {
-        Vec2 WindowPos = rw->get_window_position();
-        Vec2 WindowSize = rw->get_window_size();
+    if (_freezeMouseToCenter) {
+        Vec2 WindowPos = rw->getWindowPosition();
+        Vec2 WindowSize = rw->getWindowSize();
         int CenterX = (int)(WindowPos.x + WindowSize.x / 2);
         int CenterY = (int)(WindowPos.y + WindowSize.y / 2);
 
-        if (abs(Position.x - CenterX) > 1 || abs(Position.y - CenterY) > 1) {
+        if (abs(position.x - CenterX) > 1 || abs(position.y - CenterY) > 1) {
             SetCursorPos(CenterX, CenterY);
         }
     }
+    mouseDetails.motionPosition = position;
 }
 
-void Input::set_passive_mouse_position(Vec2 Position) {
-    MouseDetails.PassiveMotionPosition = Position;
-
-    if (_FreezeMouseToCenter) {
-        Vec2 WindowPos = rw->get_window_position();
-        Vec2 WindowSize = rw->get_window_size();
+void Input::setPassiveMousePosition(Vec2 position) {
+    if (_freezeMouseToCenter) {
+        Vec2 WindowPos = rw->getWindowPosition();
+        Vec2 WindowSize = rw->getWindowSize();
         int CenterX = (int)(WindowPos.x + WindowSize.x / 2);
         int CenterY = (int)(WindowPos.y + WindowSize.y / 2);
 
-        if (abs(Position.x - CenterX) > 1 || abs(Position.y - CenterY) > 1) {
+        if (abs(position.x - CenterX) > 1 || abs(position.y - CenterY) > 1) {
             SetCursorPos(CenterX, CenterY);
         }
     }
+    mouseDetails.passiveMotionPosition = position;
+
 }
 
-void Input::show_mouse(bool value) {
+void Input::setMouseScrollwheelValues(int button, int scrollDirection, Vec2 position) {
+    mouseDetails.scrollWheel.button = button;
+    mouseDetails.scrollWheel.scrollDirection = scrollDirection;
+    mouseDetails.scrollWheel.position = position;
+}
+
+void Input::showMouse(bool value) {
     if (value) {
         while (ShowCursor(TRUE) < 0) {}
     }
@@ -159,74 +163,76 @@ void Input::show_mouse(bool value) {
     }
 }
 
-void Input::freeze_mouse_to_center(bool value) {
-    _FreezeMouseToCenter = value;
+void Input::freezeMouseToCenter(bool value) {
+    _freezeMouseToCenter = value;
 }
 
 void Input::update() {
     // Update previous mouse button states
-    PreviousMouseButtonStates = MouseButtonStates;
+    previousMouseButtonStates = mouseButtonStates;
 
-    for (size_t i = 0; i < AmountOfMouseButton; i++) {
-        auto& MouseButton = MouseButtonsArray[i];
-        MouseButton.LastState = MouseButton.CurrentState;
-        MouseButton.CurrentState = get_mouse_button(i);
-        MouseButtonsArray[i] = MouseButton;
+    for (size_t i = 0; i < amountOfMouseButton; i++) {
+        auto& MouseButton = mouseButtonsArray[i];
+        MouseButton.lastState = MouseButton.currentState;
+        MouseButton.currentState = getMouseButton(i);
+        mouseButtonsArray[i] = MouseButton;
     }
 
 
     // Update key states
     for (int i = 0; i < KEYs.size(); i++) {
         auto& keyData = KEYs[i];
-        keyData.LastState = keyData.CurrentState;
-        keyData.CurrentState = is_key_down(keyData.KeyCode);
+        keyData.lastState = keyData.currentState;
+        keyData.currentState = isKeyDown(keyData.keyCode);
         KEYs[i] = keyData;
     }
+
+   
 }
 
-bool Input::was_key_just_released(char Key) {
+bool Input::wasKeyJustReleased(int Key) {
     for (int i = 0; i < KEYs.size(); i++) {
-        if (Key == KEYs[i].KeyCode && KEYs[i].LastState == true && KEYs[i].CurrentState == false) {
+        if (Key == KEYs[i].keyCode && KEYs[i].lastState == true && KEYs[i].currentState == false) {
             return true;
         }
     }
     return false;
 }
 
-bool Input::was_key_just_pressed(char Key) {
+bool Input::wasKeyJustPressed(int Key) {
     for (int i = 0; i < KEYs.size(); i++) {
-        if (Key == KEYs[i].KeyCode && KEYs[i].LastState == false && KEYs[i].CurrentState == true) {
+        if (Key == KEYs[i].keyCode && KEYs[i].lastState == false && KEYs[i].currentState == true) {
             return true;
         }
     }
     return false;
 }
 
-void Input::add_key(char Key) {
+void Input::addKey(int Key) {
     KeyCodeData KD = KeyCodeData();
     KD.set_key(Key);
     KEYs.append(KD);
 }
 
-void Input::add_IAxis(InputAxis iaxis) {
+void Input::addIAxis(InputAxis iaxis) {
     IAxis.append(iaxis);
 }
 
-float Input::get_IAxis(string axisName) {
+float Input::getIAxis(string axisName) {
     for (int i = 0; i < IAxis.size(); ++i) {
         InputAxis& axis = IAxis.get_ref(i);
-        if (axis.AxisName == axisName) {
+        if (axis.axisName == axisName) {
             bool pos = false, neg = false;
             for (int j = 0; j < axis.BIKeys.size(); ++j) {
                 const auto& bk = axis.BIKeys.get_ref(j);
-                if (is_key_down(bk.a))      pos = true;
-                else if (is_key_down(bk.b)) neg = true;
+                if (isKeyDown(bk.a))      pos = true;
+                else if (isKeyDown(bk.b)) neg = true;
             }
-            if (pos)      axis.value += delta_time;
-            else if (neg) axis.value -= delta_time;
+            if (pos)      axis.value += deltaTime;
+            else if (neg) axis.value -= deltaTime;
             else if (axis.value != 0.0f) {
                 float s = (axis.value > 0.0f ? 1.0f : -1.0f);
-                axis.value -= s * delta_time;
+                axis.value -= s * deltaTime;
                 if (std::abs(axis.value) < 0.009f) axis.value = 0.0f;
             }
 

@@ -15,7 +15,6 @@
 #include <gl/GLU.h>
 #include "GL/freeglut.h"
 
-
 using namespace std;
 
 
@@ -29,6 +28,9 @@ using namespace std;
 #define MAKE_STRING_GREEN(_string) (string(COLOR_GREEN) + _string + COLOR_RESET)
 
 #define LOG_DEBUG(message) cout << MAKE_STRING_GREEN("[LOGGING] " + string(message)) << "\n"
+#define BLog_Debug(message) cout << COLOR_GREEN << "[LOGGING] " << message << COLOR_RESET << "\n"
+#define BLog_WARNING(message) cout << COLOR_YELLOW << "[WARNING] " << message << COLOR_RESET << "\n"
+#define BLog_ERROR(message) cout << COLOR_RED << "[ERROR] " << message << COLOR_RESET << "\n"
 #define LOG_DEBUG_R(message) cout << "\r" << MAKE_STRING_GREEN("[LOGGING] " + string(message)) << flush
 #define LOG_WARNING(message) cerr << MAKE_STRING_YELLOW("[WARNING] " + string(message)) << "\n"
 #define LOG_ERROR(message) { cerr << MAKE_STRING_RED("[ERROR] " + string(message)) << "\n"; exit(EXIT_FAILURE); }

@@ -4,8 +4,10 @@ class r_window;
 namespace callbacks {
 	void init(r_window* rw);
 	void display();
+	void reshapeWindow(int width, int height);
 	void timer(int preferred_refresh);
-	void mouse_click(int button, int state, int x, int y);
-	void mouse_motion(int x, int y);
-	void mouse_passive_motion(int x, int y);
+	void mouseClick(int button, int state, int x, int y);
+	void mouseMotion(int x, int y);
+	void mousePassiveMotion(int x, int y);
+	void mouseScrollwheel(int button, int scrollDirection, int x, int y);
 }

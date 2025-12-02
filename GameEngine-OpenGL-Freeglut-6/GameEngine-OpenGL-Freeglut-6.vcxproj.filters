@@ -11,11 +11,11 @@
     <Filter Include="Files\src">
       <UniqueIdentifier>{a4875276-5ca0-42a8-98ce-7a25620f9b23}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Files\includes\GameObject">
-      <UniqueIdentifier>{bdaacb10-3528-4ca2-841c-a14942e014da}</UniqueIdentifier>
+    <Filter Include="Files\includes\components">
+      <UniqueIdentifier>{79adc495-fcb7-441c-8d61-faf514c81f7b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Files\src\GameObject">
-      <UniqueIdentifier>{5df1f3be-dd74-4710-82e9-ca315398be62}</UniqueIdentifier>
+    <Filter Include="Files\src\components">
+      <UniqueIdentifier>{e1faf03c-a265-46c6-8dc2-ff1299ff493b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -37,8 +37,14 @@
     <ClInclude Include="idh.h">
       <Filter>Files\includes</Filter>
     </ClInclude>
+    <ClInclude Include="callbacks.h">
+      <Filter>Files\includes</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>Files\includes</Filter>
+    </ClInclude>
     <ClInclude Include="GameObject.h">
-      <Filter>Files\includes\GameObject</Filter>
+      <Filter>Files\includes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -47,9 +53,6 @@
     </ClCompile>
     <ClCompile Include="r_window.cpp">
       <Filter>Files\src</Filter>
-    </ClCompile>
-    <ClCompile Include="callbacks.h">
-      <Filter>Files\includes</Filter>
     </ClCompile>
     <ClCompile Include="callbacks.cpp">
       <Filter>Files\src</Filter>
@@ -60,10 +63,10 @@
     <ClCompile Include="idh.cpp">
       <Filter>Files\src</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Files\src\GameObject</Filter>
-    </ClCompile>
     <ClCompile Include="camera.cpp">
+      <Filter>Files\src</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
       <Filter>Files\src</Filter>
     </ClCompile>
   </ItemGroup>

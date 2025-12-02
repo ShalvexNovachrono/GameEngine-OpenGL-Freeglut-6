@@ -1,4 +1,7 @@
+#define STB_IMAGE_IMPLEMENTATION  
 #include "util.h"
+#include "stb_image.h"
+
 
 namespace util {
 
@@ -212,6 +215,82 @@ namespace util {
         indices.append(idx_1);
         indices.append(idx_2);
         indices.append(idx_3);
+    }
+
+    bool texture_data::loadTexture(const char* path) {
+        BLog_Debug("Attempting to load texture from path: " << path);
+
+        // Load image using stb_image
+        int channels;
+        unsigned char* data = stbi_load(path, &width, &height, &channels, 0);
+
+        if (!data) {
+            std::cerr << "Failed to load texture: " << path << std::endl;
+            std::cerr << "Reason: " << stbi_failure_reason() << std::endl;
+            return false;
+        }
+
+        // Generate OpenGL texture
+        glGenTextures(1, &id);
+        if (id == 0) {
+            std::cerr << "Failed to generate OpenGL texture ID." << std::endl;
+            stbi_image_free(data);
+            return false;
+        }
+
+        glBindTexture(GL_TEXTURE_2D, id);
+
+        // Determine format based on channels
+        GLenum format;
+        switch (channels) {
+        case 1: format = GL_LUMINANCE; break;
+        case 3: format = GL_RGB; break;
+        case 4: format = GL_RGBA; break;
+        default:
+            BLog_ERROR("Unexpected number of channels: " << channels);
+            format = GL_RGB; // Fallback to RGB
+            break;
+        }
+
+        // Upload texture data
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+
+        // Check for OpenGL errors during texture upload
+        GLenum error = glGetError();
+        if (error != GL_NO_ERROR) {
+            BLog_ERROR("OpenGL Error during texture upload: " << error);
+            stbi_image_free(data);
+            return false;
+        }
+
+        // Set texture parameters
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+        // Clean up
+        stbi_image_free(data);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        BLog_Debug("Texture loaded successfully: " << path);
+        BLog_Debug("Dimensions: " << width << "x" << height << ", Channels: " << channels);
+        loaded = true;
+
+
+        return loaded;
+    }
+
+    int texture_data::getWidth() {
+        return width;
+    }
+
+    int texture_data::getHeight() {
+        return height;
+    }
+
+    bool texture_data::isLoaded() {
+        return loaded;
     }
 
 }

@@ -9,7 +9,7 @@ class GameObject {
 private:
     bool IsDestroyed = false;
 public:
-    float& delta_time;
+    float& deltaTime;
     Input* input;
     engine* _engine;
 

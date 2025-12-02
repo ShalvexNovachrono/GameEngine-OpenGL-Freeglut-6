@@ -151,43 +151,43 @@ struct Vec2 {
     Vec2(Vec2 const& value) : x(value.x), y(value.y) {}
 
     Vec2 operator+(Vec2 const& other) const {
-        return Vec2(x + other.x, y + other.y);
+        return { x + other.x, y + other.y };
     }
 
     Vec2 operator+(float const& other) const {
-        return Vec2(x + other, y + other);
+        return { x + other, y + other };
     }
 
     Vec2 operator-(Vec2 const& other) const {
-        return Vec2(x - other.x, y - other.y);
+        return { x - other.x, y - other.y };
     }
 
     Vec2 operator-(float const& other) const {
-        return Vec2(x - other, y - other);
+        return { x - other, y - other };
     }
 
-    Vec2 operator-() const { return Vec2(-x, -y); }
+    Vec2 operator-() const { return { -x, -y }; }
 
     Vec2 operator/(Vec2 const& other) const {
         if (other.x == 0 || other.y == 0) {
             LOG_ERROR("Division by zero");
         }
-        return Vec2(x / other.x, y / other.y);
+        return { x / other.x, y / other.y };
     }
 
     Vec2 operator/(float const& other) const {
         if (other == 0) {
             LOG_ERROR("Division by zero");
         }
-        return Vec2(x / other, y / other);
+        return { x / other, y / other };
     }
 
     Vec2 operator*(Vec2 const& other) const {
-        return Vec2(x * other.x, y * other.y);
+        return { x * other.x, y * other.y };
     }
 
     Vec2 operator*(float const& other) const {
-        return Vec2(x * other, y * other);
+        return { x * other, y * other };
     }
 
     Vec2& operator=(Vec2 const& other) {
@@ -277,7 +277,19 @@ struct Vec2 {
         if (mag == 0.0f) {
             LOG_ERROR("Division by zero");
         }
-        return Vec2(x / mag, y / mag);
+        return { x / mag, y / mag };
+    }
+
+    Vec2 Normalised() {
+        float mag = Magnitude();
+        if (mag == 0.0f) {
+            LOG_ERROR("Division by zero");
+        }
+
+        x /= mag;
+        y /= mag;
+
+        return {x, y};
     }
 
     float Distance(Vec2 const& other) const {
@@ -315,18 +327,18 @@ struct Vec2 {
 
     string operator+(const string& _string) const { return _string + tostr(); }
 
-    static Vec2 Zero() { return Vec2(0, 0); }
-    static Vec2 One() { return Vec2(1, 1); }
+    static Vec2 Zero() { return { 0, 0 }; }
+    static Vec2 One() { return { 1, 1 }; }
 
-    static Vec2 Right() { return Vec2(1, 0); }
-    static Vec2 Left() { return Vec2(-1, 0); }
+    static Vec2 Right() { return { 1, 0 }; }
+    static Vec2 Left() { return { -1, 0 }; }
 
-    static Vec2 Up() { return Vec2(0, 1); }
-    static Vec2 Down() { return Vec2(0, -1); }
+    static Vec2 Up() { return { 0, 1 }; }
+    static Vec2 Down() { return { 0, -1 }; }
 
     static Vec2 stov2(string s) {
         vector<float> v = parse_string_to_vector_float(s, 2);
-        return Vec2(v[0], v[1]);
+        return { v[0], v[1] };
     }
 };
 
@@ -342,43 +354,43 @@ struct Vec3 {
     Vec3(Vec2 const& value) : x(value.x), y(value.y), z(0.0f) {}
 
     Vec3 operator+(Vec3 const& other) const {
-        return Vec3(x + other.x, y + other.y, z + other.z);
+        return { x + other.x, y + other.y, z + other.z };
     }
 
     Vec3 operator+(float const& other) const {
-        return Vec3(x + other, y + other, z + other);
+        return { x + other, y + other, z + other };
     }
 
     Vec3 operator-(Vec3 const& other) const {
-        return Vec3(x - other.x, y - other.y, z - other.z);
+        return { x - other.x, y - other.y, z - other.z };
     }
 
     Vec3 operator-(float const& other) const {
-        return Vec3(x - other, y - other, z - other);
+        return { x - other, y - other, z - other };
     }
 
-    Vec3 operator-() const { return Vec3(-x, -y, -z); }
+    Vec3 operator-() const { return { -x, -y, -z }; }
 
     Vec3 operator/(Vec3 const& other) const {
         if (other.x == 0 || other.y == 0 || other.z == 0) {
             LOG_ERROR("Division by zero");
         }
-        return Vec3(x / other.x, y / other.y, z / other.z);
+        return { x / other.x, y / other.y, z / other.z };
     }
 
     Vec3 operator/(float const& other) const {
         if (other == 0) {
             LOG_ERROR("Division by zero");
         }
-        return Vec3(x / other, y / other, z / other);
+        return { x / other, y / other, z / other };
     }
 
     Vec3 operator*(Vec3 const& other) const {
-        return Vec3(x * other.x, y * other.y, z * other.z);
+        return { x * other.x, y * other.y, z * other.z };
     }
 
     Vec3 operator*(float const& other) const {
-        return Vec3(x * other, y * other, z * other);
+        return { x * other, y * other, z * other };
     }
 
     Vec3& operator=(Vec3 const& other) {
@@ -486,7 +498,7 @@ struct Vec3 {
         if (mag == 0.0f) {
             LOG_ERROR("Division by zero");
         }
-        return Vec3(x / mag, y / mag, z / mag);
+        return { x / mag, y / mag, z / mag };
     }
 
     float Distance(Vec3 const& other) const {
@@ -535,18 +547,18 @@ struct Vec3 {
 
     string operator+(string _string) const { return _string + tostr(); }
 
-    static Vec3 Zero() { return Vec3(0, 0, 0); }
-    static Vec3 One() { return Vec3(1, 1, 1); }
+    static Vec3 Zero() { return { 0, 0, 0 }; }
+    static Vec3 One() { return { 1, 1, 1 }; }
 
-    static Vec3 Right() { return Vec3(1, 0, 0); }
-    static Vec3 Left() { return Vec3(-1, 0, 0); }
+    static Vec3 Right() { return { 1, 0, 0 }; }
+    static Vec3 Left() { return { -1, 0, 0 }; }
 
-    static Vec3 Up() { return Vec3(0, 1, 0); }
-    static Vec3 Down() { return Vec3(0, -1, 0); }
+    static Vec3 Up() { return { 0, 1, 0 }; }
+    static Vec3 Down() { return { 0, -1, 0 }; }
 
     static Vec3 stov3(string s) {
         vector<float> v = parse_string_to_vector_float(s, 3);
-        return Vec3(v[0], v[1], v[2]);
+        return { v[0], v[1], v[2] };
     }
 };
 
@@ -564,43 +576,43 @@ struct Vec4 {
     Vec4(Vec3 const& value) : x(value.x), y(value.y), z(value.z), w(0.0f) {}
 
     Vec4 operator+(Vec4 const& other) const {
-        return Vec4(x + other.x, y + other.y, z + other.z, w + other.w);
+        return { x + other.x, y + other.y, z + other.z, w + other.w };
     }
 
     Vec4 operator+(float const& other) const {
-        return Vec4(x + other, y + other, z + other, w + other);
+        return { x + other, y + other, z + other, w + other };
     }
 
     Vec4 operator-(Vec4 const& other) const {
-        return Vec4(x - other.x, y - other.y, z - other.z, w - other.w);
+        return { x - other.x, y - other.y, z - other.z, w - other.w };
     }
 
     Vec4 operator-(float const& other) const {
-        return Vec4(x - other, y - other, z - other, w - other);
+        return { x - other, y - other, z - other, w - other };
     }
 
-    Vec4 operator-() const { return Vec4(-x, -y, -z, -w); }
+    Vec4 operator-() const { return { -x, -y, -z, -w }; }
 
     Vec4 operator/(Vec4 const& other) const {
         if (other.x == 0 || other.y == 0 || other.z == 0 || other.w == 0) {
             LOG_ERROR("Division by zero");
         }
-        return Vec4(x / other.x, y / other.y, z / other.z, w / other.w);
+        return { x / other.x, y / other.y, z / other.z, w / other.w };
     }
 
     Vec4 operator/(float const& other) const {
         if (other == 0) {
             LOG_ERROR("Division by zero");
         }
-        return Vec4(x / other, y / other, z / other, w / other);
+        return { x / other, y / other, z / other, w / other };
     }
 
     Vec4 operator*(Vec4 const& other) const {
-        return Vec4(x * other.x, y * other.y, z * other.z, w * other.w);
+        return { x * other.x, y * other.y, z * other.z, w * other.w };
     }
 
     Vec4 operator*(float const& other) const {
-        return Vec4(x * other, y * other, z * other, w * other);
+        return { x * other, y * other, z * other, w * other };
     }
 
     Vec4& operator=(Vec4 const& other) {
@@ -728,7 +740,7 @@ struct Vec4 {
         if (mag == 0.0f) {
             LOG_ERROR("Division by zero");
         }
-        return Vec4(x / mag, y / mag, z / mag, w / mag);
+        return { x / mag, y / mag, z / mag, w / mag };
     }
 
     float Distance(Vec4 const& other) const {
@@ -764,19 +776,19 @@ struct Vec4 {
 
     string operator+(string _string) const { return _string + tostr(); }
 
-    static Vec4 Zero() { return Vec4(0, 0, 0, 1); }
-    static Vec4 One() { return Vec4(1, 1, 1, 1); }
+    static Vec4 Zero() { return { 0, 0, 0, 1 }; }
+    static Vec4 One() { return { 1, 1, 1, 1 }; }
 
-    static Vec4 Right() { return Vec4(1, 0, 0, 0); }
-    static Vec4 Left() { return Vec4(-1, 0, 0, 0); }
+    static Vec4 Right() { return { 1, 0, 0, 0 }; }
+    static Vec4 Left() { return { -1, 0, 0, 0 }; }
 
-    static Vec4 Up() { return Vec4(0, 1, 0, 0); }
-    static Vec4 Down() { return Vec4(0, -1, 0, 0); }
+    static Vec4 Up() { return { 0, 1, 0, 0 }; }
+    static Vec4 Down() { return { 0, -1, 0, 0 }; }
 
 
     static Vec4 stov4(string s) {
         vector<float> v = parse_string_to_vector_float(s, 4);
-        return Vec4(v[0], v[1], v[2], v[3]);
+        return { v[0], v[1], v[2], v[3] };
     }
 };
 

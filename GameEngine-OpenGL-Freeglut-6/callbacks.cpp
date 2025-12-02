@@ -21,6 +21,12 @@ namespace callbacks {
 		}
 	}
 
+	void reshapeWindow(int width, int height) {
+		if (rw_instance != nullptr) {
+			rw_instance->reshapeWindow(width, height);
+		}
+	}
+
 	/// <summary>
 	/// This will constantly call the timer function of the r_window at a preferred refresh rate.
 	/// </summary>
@@ -41,9 +47,9 @@ namespace callbacks {
 	/// <param name="State">The state of the button (GLUT_DOWN or GLUT_UP).</param>
 	/// <param name="X">The window-relative x-coordinate of the mouse.</param>
 	/// <param name="Y">The window-relative y-coordinate of the mouse.</param>
-	void mouse_click(int button, int state, int x, int y) {
+	void mouseClick(int button, int state, int x, int y) {
 		if (rw_instance != nullptr) {
-			rw_instance->mouse_click(button, state, x, y);
+			rw_instance->mouseClick(button, state, x, y);
 		}
 		glutPostRedisplay();
 	}
@@ -53,15 +59,27 @@ namespace callbacks {
 	/// </summary>
 	/// <param name="x">The current window-relative x-coordinate of the mouse cursor.</param>
 	/// <param name="y">The current window-relative y-coordinate of the mouse cursor.</param>
-	void mouse_motion(int x, int y) {
+	void mouseMotion(int x, int y) {
 		if (rw_instance != nullptr) {
-			rw_instance->mouse_motion(x, y);
+			rw_instance->mouseMotion(x, y);
 		}
 	}
 
-	void mouse_passive_motion(int x, int y) {
+
+	/// <summary>
+	/// Mouse passive motion function callback.
+	/// </summary>
+	/// <param name="x"></param>
+	/// <param name="y"></param>
+	void mousePassiveMotion(int x, int y) {
 		if (rw_instance != nullptr) {
-			rw_instance->mouse_passive_motion(x, y);
+			rw_instance->mousePassiveMotion(x, y);
+		}
+	}
+
+	void mouseScrollwheel(int button, int scrollDirection, int x, int y) {
+		if (rw_instance != nullptr) {
+			rw_instance->mouseScrollwheel(button, scrollDirection, x, y);
 		}
 	}
 }

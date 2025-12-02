@@ -7,7 +7,7 @@ int main(int argc, char* argv[]) {
     r_window* main_window = new r_window(800, 600, "Shalvex Novachrono's OpenGL Window");
 
     main_window->init(argc, argv);
-    main_window->clean_up();
+    main_window->cleanUp();
 
     delete main_window;
     return 0;

@@ -3,8 +3,9 @@
 
 #include "main.h"
 #include "extra_math.h"
-#include "GameObject.h"
+#include "idh.h"
 #include "camera.h"
+#include "util.h"
 
 class r_window {
 public:
@@ -15,57 +16,70 @@ public:
 
 	void init(int argc, char* argv[]);
 
-	void clean_up();
+	void cleanUp();
+
+	void start();
 
 	void timer();
 
 	void draw();
 
-	void mouse_click(int button, int state, int x, int y);
+	void mouseClick(int button, int state, int x, int y);
 
-	void mouse_motion(int x, int y);
+	void mouseMotion(int x, int y);
 
-	void mouse_passive_motion(int x, int y);
+	void mousePassiveMotion(int x, int y);
 
-	float get_delta_time() const { return delta_time; }
+	void mouseScrollwheel(int button, int scrollDirection, int x, int y);
 
-	float get_system_delta_time() const { return system_delta_time; }
+	float getDeltaTime() const { return deltaTime; }
 
-	float get_time_scale() const { return time_scale; }
+	float getSystemDeltaTime() const { return systemDeltaTime; }
 
-	void set_time_scale(float scale) { time_scale = scale; }
+	float getTimeScale() const { return timeScale; }
 
-	int get_fps() const { return fps; }
+	void setTimeScale(float scale) { timeScale = scale; }
 
-	float get_fov() const { return fov; }
+	void reshapeWindow(int width, int height);
 
-	Vec2 get_window_size() const { return Vec2(static_cast<float>(width), static_cast<float>(height)); }
+	int getFps() const { return fps; }
 
-	Vec2 get_window_position() const { return Vec2(static_cast<float>(glutGet(GLUT_WINDOW_X)), static_cast<float>(glutGet(GLUT_WINDOW_Y))); }
+	float getFov() const { return fov; }
 
-	Input& get_input_reference();
+	void setFov(float new_fov);
+
+	void updateWindowDetails();
+
+	Vec2 getWindowSize() const { return Vec2(static_cast<float>(width), static_cast<float>(height)); }
+
+	Vec2 getWindowPosition() const { return Vec2(static_cast<float>(glutGet(GLUT_WINDOW_X)), static_cast<float>(glutGet(GLUT_WINDOW_Y))); }
+
+	Input& getInputRef();
 private:
     int width = 100, height = 100;
     string title;
 
-    float delta_time = 0.0f;
-	float system_delta_time = 0.0f;
-	float last_frame = 0.0f;
-	float time_scale = 1.0f;
-	float current_frame = 0.0f;
+    float deltaTime = 0.0f;
+	float systemDeltaTime = 0.0f;
+	float lastFrame = 0.0f;
+	float timeScale = 1.0f;
+	float currentFrame = 0.0f;
     int fps = 0;
 
-	const float fov = 45.0f;
-	const float frame_rate = 165;
-	const int frame_time = static_cast<int>(1000.0f / frame_rate);
+	float fov = 45.0f;
+	const float minimumFov = 1.0f, maximumFov = 110.0f;
+	const float frameRate = 165;
+	const int frameTime = static_cast<int>(1000.0f / frameRate);
 
 
 
 	Input* input;
+	//vector<unique_ptr<util::texture_data>> textures;
 
-
-	Vec3 WorldPostion = Vec3(0, 0, 0);
-	Vec3 WorldRotaion = Vec3(0, 0, 0);
+	Vec3 worldPostion = Vec3(0, 0, 0);
+	Vec3 worldRotaion = Vec3(0, 0, 0);
     Vec4 clearColor = Vec4(0.2f, 0.3f, 0.3f, 1.0f);
+
+	bool didTimerGetCalled = false;
 };
 #endif

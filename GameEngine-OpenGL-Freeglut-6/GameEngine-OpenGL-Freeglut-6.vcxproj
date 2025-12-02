@@ -124,7 +124,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="callbacks.cpp" />
-    <ClCompile Include="callbacks.h" />
+    <ClInclude Include="callbacks.h" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="idh.cpp" />
@@ -139,6 +139,7 @@
     <ClInclude Include="idh.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="r_window.h" />
+    <ClInclude Include="stb_image.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
