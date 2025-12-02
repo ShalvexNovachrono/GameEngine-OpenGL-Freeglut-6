@@ -17,6 +17,9 @@
     <Filter Include="Files\src\components">
       <UniqueIdentifier>{e1faf03c-a265-46c6-8dc2-ff1299ff493b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Files\assets">
+      <UniqueIdentifier>{3c9f027a-1e86-4e5a-84cc-3eec3a4b379d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="extra_math.h">

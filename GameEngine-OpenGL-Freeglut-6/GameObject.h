@@ -2,7 +2,7 @@
 #include "main.h"
 #include "idh.h"
 
-class engine;
+class r_window;
 using namespace std;
 
 class GameObject {
@@ -11,10 +11,13 @@ private:
 public:
     float& deltaTime;
     Input* input;
-    engine* _engine;
+    r_window* rw;
 
     string NAME;
     int ID;
 
-    GameObject() = default;
+    GameObject(float& dt, Input* in, r_window* _rw, string name, int id) : delta_time(dt), input(in), rw(_rw) {
+		NAME = name;
+		ID = id;
+    }
 };

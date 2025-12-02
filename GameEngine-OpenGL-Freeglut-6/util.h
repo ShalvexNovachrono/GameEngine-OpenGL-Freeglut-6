@@ -11,7 +11,7 @@ namespace util {
     /// @brief Reads the entire content of a text file and returns it as a string.
     /// @param filePath The path to the text file.
     /// @return A string containing the content of the file.
-    static string read_file_as_string(const string& filePath);
+    string read_file_as_string(const string& filePath);
 
 
     template <typename T>

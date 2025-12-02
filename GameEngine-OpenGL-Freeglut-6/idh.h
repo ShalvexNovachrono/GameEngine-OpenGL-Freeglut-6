@@ -84,6 +84,7 @@ public:
 
     //--------Constructor--------//
     Input(float& _DeltaTime, r_window* rw);
+    ~Input();
 
     /// <summary>
     /// Returns the mouse position
@@ -163,13 +164,6 @@ public:
     /// </summary>
     /// <returns></returns>
     Vec2 getOnClickLocation();
-
-    /// <summary>
-    /// Checks if [Key] is pressed and RETURNS true or false
-    /// </summary>
-    /// <param name="key">char</param>
-    /// <returns>bool</returns>
-    bool isKeyDown(char Key);
 
     /// <summary>
     /// Checks if [Key] is pressed and RETURNS true or false

@@ -1,14 +1,7 @@
 #include "idh.h"
 #include "r_window.h"
 
-bool Input::isKeyDown(char Key) {
-    if (GetAsyncKeyState(Key) & 0x8000) {
-        return true;
-    }
-    return false;
-}
-
-bool Input::isKeyDown(int Key) {
+bool Input::is_key_down(int Key) {
     if (GetAsyncKeyState(Key) & 0x8000) {
         return true;
     }
@@ -232,11 +225,11 @@ float Input::getIAxis(string axisName) {
             else if (neg) axis.value -= deltaTime;
             else if (axis.value != 0.0f) {
                 float s = (axis.value > 0.0f ? 1.0f : -1.0f);
-                axis.value -= s * deltaTime;
-                if (std::abs(axis.value) < 0.009f) axis.value = 0.0f;
+                axis.value -= s * delta_time;
+                if (abs(axis.value) < 0.009f) axis.value = 0.0f;
             }
 
-            axis.value = extra_math_h::clamp(axis.value, -1.0f, 1.0f);
+            axis.value = clamp(axis.value, -1.0f, 1.0f);
             return axis.value;
         }
     }
