@@ -1,7 +1,7 @@
 #include "idh.h"
 #include "r_window.h"
 
-bool Input::is_key_down(int Key) {
+bool Input::isKeyDown(int Key) {
     if (GetAsyncKeyState(Key) & 0x8000) {
         return true;
     }
@@ -16,6 +16,10 @@ Input::Input(float& _DeltaTime, r_window* rw) : deltaTime(_DeltaTime), rw(rw) {
 
     // in the future i should probably try getting all the buttons of the mouse 
     mouseButtonsArray = new KeyCodeData[amountOfMouseButton];
+}
+
+Input::~Input() {
+    delete[] mouseButtonsArray;
 }
 
 Vec2 Input::getMousePosition() {
@@ -225,7 +229,7 @@ float Input::getIAxis(string axisName) {
             else if (neg) axis.value -= deltaTime;
             else if (axis.value != 0.0f) {
                 float s = (axis.value > 0.0f ? 1.0f : -1.0f);
-                axis.value -= s * delta_time;
+                axis.value -= s * deltaTime;
                 if (abs(axis.value) < 0.009f) axis.value = 0.0f;
             }
 

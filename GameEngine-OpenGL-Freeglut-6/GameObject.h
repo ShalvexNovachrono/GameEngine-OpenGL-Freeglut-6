@@ -16,7 +16,7 @@ public:
     string NAME;
     int ID;
 
-    GameObject(float& dt, Input* in, r_window* _rw, string name, int id) : delta_time(dt), input(in), rw(_rw) {
+    GameObject(float& dt, Input* in, r_window* _rw, string name, int id) : deltaTime(dt), input(in), rw(_rw) {
 		NAME = name;
 		ID = id;
     }

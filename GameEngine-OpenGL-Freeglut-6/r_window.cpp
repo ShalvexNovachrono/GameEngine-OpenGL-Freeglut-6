@@ -1,6 +1,5 @@
 #include "r_window.h"
 #include "callbacks.h"
-#include "util.h"
 
 
 util::static_mesh loaded_mesh;
