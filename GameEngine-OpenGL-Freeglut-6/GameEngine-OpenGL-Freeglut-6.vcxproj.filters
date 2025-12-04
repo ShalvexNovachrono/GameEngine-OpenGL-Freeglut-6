@@ -49,6 +49,12 @@
     <ClInclude Include="GameObject.h">
       <Filter>Files\includes</Filter>
     </ClInclude>
+    <ClInclude Include="base_component.h">
+      <Filter>Files\includes\components</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Files\includes\components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -71,6 +77,12 @@
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
       <Filter>Files\src</Filter>
+    </ClCompile>
+    <ClCompile Include="base_component.cpp">
+      <Filter>Files\src\components</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Files\src\components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
