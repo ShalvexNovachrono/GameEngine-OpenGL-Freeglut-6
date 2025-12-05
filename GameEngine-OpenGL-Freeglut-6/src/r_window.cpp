@@ -1,6 +1,7 @@
 #include "../include/r_window.h"
 #include "../include/callbacks.h"
 #include "../include/util.h"
+#include "../include/world_container.h"
 
 
 util::static_mesh loaded_mesh;
@@ -38,6 +39,9 @@ void r_window::init(int argc, char* argv[]) {
 	input->addKey('L');
 	#pragma endregion
 
+	#pragma region Setup World
+	world = new world_container(this);
+	#pragma endregion 
 
 	camera = new Camera(this);
 
@@ -87,6 +91,8 @@ void r_window::cleanUp() {
 void r_window::start() {
 	didTimerGetCalled = true;
 
+	world->init();
+	
 	//textures.push_back(make_unique<util::texture_data>());
 	//textures.back()->loadTexture("assets/Test_grid_2000x2000.png");
 }
@@ -94,7 +100,7 @@ void r_window::start() {
 void r_window::timer() {
 	if (!didTimerGetCalled) start();
 
-	currentFrame = (float)glutGet(GLUT_ELAPSED_TIME);              // seconds
+	currentFrame = static_cast<float>(glutGet(GLUT_ELAPSED_TIME));              // seconds
 	systemDeltaTime = (currentFrame - lastFrame) / 1000.0f;
 	if (systemDeltaTime <= 0.0f) systemDeltaTime = 1e-6f;
 	deltaTime = timeScale * systemDeltaTime;
@@ -107,6 +113,7 @@ void r_window::timer() {
 
 	input->update();
 	camera->update();
+	world->update();
 
 	glLoadIdentity();
 

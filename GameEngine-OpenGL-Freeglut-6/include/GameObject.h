@@ -7,8 +7,8 @@ class Transform;
 
 class GameObject {
     friend class r_window;
-    bool isDestroyed = false;
-    bool isPaused = false;
+    bool destroyed = false;
+    bool paused = false;
     int id = -1;
     vector<unique_ptr<base_component>> components;
 public:
@@ -26,16 +26,15 @@ public:
     
     ~GameObject();
     void update();
-    void display();
-
-
+    
     void setDestroyed();
-
+    bool isDestroyed() const;
     /// <summary>
     /// Sets the activity state (paused/running).
     /// </summary>
     /// <param name="value">True to run, false to pause.</param>
     void setActivity(bool value);
+    bool getActivity() const;
 
     void addComponent(unique_ptr<base_component> component);
     template <typename UniqueComponentType>
@@ -44,14 +43,13 @@ public:
     void removeComponent(int componentID) const;
     void removeAllComponents() const;
 
+    void updateComponents() const;
     void updateRemoveComponents();
 
     template <typename UniqueComponentType>
-    UniqueComponentType* getComponent() const ;
-
-    template <typename UniqueComponentType>
     bool hasComponent(UniqueComponentType* Component);
-
+    template <typename UniqueComponentType>
+    UniqueComponentType* getComponent() const ;
     vector<unique_ptr<base_component>>& getComponents();
 
     int getID() const;

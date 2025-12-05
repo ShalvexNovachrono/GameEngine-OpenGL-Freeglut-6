@@ -6,6 +6,7 @@
 #include "idh.h"
 #include "camera.h"
 
+class world_container;
 class r_window {
 public:
 	Camera* camera;
@@ -74,7 +75,7 @@ private:
 
 
 	Input* input;
-	//vector<unique_ptr<util::texture_data>> textures;
+	world_container* world;
 
 	Vec3 worldPostion = Vec3(0, 0, 0);
 	Vec3 worldRotaion = Vec3(0, 0, 0);

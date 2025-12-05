@@ -9,20 +9,20 @@ GameObject::GameObject(r_window* rw, const string& name, const int& id) : rw(rw)
 	transform = getComponent<Transform>();
 }
 
-GameObject::GameObject(const GameObject& other) : isDestroyed(other.isDestroyed), isPaused(other.isPaused), rw(other.rw), input(&rw->getInputRef()), name(other.name) {
+GameObject::GameObject(const GameObject& other) : destroyed(other.destroyed), paused(other.paused), rw(other.rw), input(&rw->getInputRef()), name(other.name) {
 	addComponent<Transform>();
 	transform = getComponent<Transform>();
 }
 
-GameObject::GameObject(GameObject&& other) noexcept : isDestroyed(other.isDestroyed), isPaused(other.isPaused), rw(other.rw), input(&rw->getInputRef()), name(other.name) {
+GameObject::GameObject(GameObject&& other) noexcept : destroyed(other.destroyed), paused(other.paused), rw(other.rw), input(&rw->getInputRef()), name(other.name) {
 	addComponent<Transform>();
 	transform = getComponent<Transform>();
 }
 
 GameObject& GameObject::operator=(const GameObject& other) {
 	if (this == &other) return *this;
-	isDestroyed = other.isDestroyed;
-	isPaused = other.isPaused;
+	destroyed = other.destroyed;
+	paused = other.paused;
 	removeAllComponents();
 	updateRemoveComponents();
 
@@ -37,8 +37,8 @@ GameObject& GameObject::operator=(const GameObject& other) {
 
 GameObject& GameObject::operator=(GameObject&& other) noexcept {
 	if (this == &other) return *this;
-	isDestroyed = other.isDestroyed;
-	isPaused = other.isPaused;
+	destroyed = other.destroyed;
+	paused = other.paused;
 	
 	components = std::move(other.components);
 
@@ -51,12 +51,20 @@ GameObject& GameObject::operator=(GameObject&& other) noexcept {
 GameObject::~GameObject() = default;
 
 void GameObject::setDestroyed() { 
-	if (isDestroyed == true) return;
-	isDestroyed = true;
+	if (destroyed == true) return;
+	destroyed = true;
+}
+
+bool GameObject::isDestroyed() const {
+	return destroyed;
 }
 
 void GameObject::setActivity(bool value) { 
-	isPaused = !value;
+	paused = !value;
+}
+
+bool GameObject::getActivity() const {
+	return !paused;
 }
 
 template <typename UniqueComponentType>
@@ -90,10 +98,7 @@ bool GameObject::hasComponent(UniqueComponentType* Component) {
 }
 
 void GameObject::update() {
-	
-}
-
-void GameObject::display() {
+	updateComponents();
 }
 
 void GameObject::addComponent(unique_ptr<base_component> component) {
@@ -113,6 +118,15 @@ void GameObject::removeComponent(int componentID) const {
 void GameObject::removeAllComponents() const {
 	for (auto& component : components) {
 		component->setRemoveComponent(true);
+	}
+}
+
+void GameObject::updateComponents() const {
+	for (auto& component : components) {
+		if (component.get() == nullptr) continue;
+		if (component->isDisableComponent()) continue;
+		if (component->isRemoveComponent()) continue;
+		component->update();
 	}
 }
 
