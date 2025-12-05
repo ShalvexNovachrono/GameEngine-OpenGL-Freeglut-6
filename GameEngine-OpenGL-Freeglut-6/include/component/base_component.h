@@ -25,7 +25,7 @@ public:
     /// </summary>
     /// <param name="gm">game object</param>
     /// <param name="id">component id</param>
-    void setGameObject(GameObject* gm, const int& id);
+    virtual void setGameObject(GameObject* gm, const int& id);
 
     GameObject& getGameObject() const;
 

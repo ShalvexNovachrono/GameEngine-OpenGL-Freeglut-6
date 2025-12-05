@@ -2,6 +2,7 @@
 #include "../include/callbacks.h"
 #include "../include/util.h"
 #include "../include/world_container.h"
+#include "../include/component/Camera.h"
 
 
 util::static_mesh loaded_mesh;
@@ -43,7 +44,6 @@ void r_window::init(int argc, char* argv[]) {
 	world = new world_container(this);
 	#pragma endregion 
 
-	camera = new Camera(this);
 
 	callbacks::init(this);
 
@@ -85,7 +85,6 @@ void r_window::init(int argc, char* argv[]) {
 
 void r_window::cleanUp() {
 	delete input;
-	delete camera;
 }
 
 void r_window::start() {
@@ -112,22 +111,11 @@ void r_window::timer() {
 	//-------End-------//
 
 	input->update();
-	camera->update();
+	glLoadIdentity();
 	world->update();
 
-	glLoadIdentity();
 
-	gluLookAt(
-		camera->eye.x,
-		camera->eye.y,
-		camera->eye.z,
-		camera->center().x,
-		camera->center().y,
-		camera->center().z,
-		camera->up.x,
-		camera->up.y,
-		camera->up.z
-	);
+
 
 	glutPostRedisplay();
 }

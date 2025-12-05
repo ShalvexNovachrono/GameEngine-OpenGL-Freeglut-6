@@ -9,12 +9,12 @@ GameObject::GameObject(r_window* rw, const string& name, const int& id) : rw(rw)
 	transform = getComponent<Transform>();
 }
 
-GameObject::GameObject(const GameObject& other) : destroyed(other.destroyed), paused(other.paused), rw(other.rw), input(&rw->getInputRef()), name(other.name) {
+GameObject::GameObject(const GameObject& other) : destroyed(other.destroyed), active(other.active), rw(other.rw), input(&rw->getInputRef()), name(other.name) {
 	addComponent<Transform>();
 	transform = getComponent<Transform>();
 }
 
-GameObject::GameObject(GameObject&& other) noexcept : destroyed(other.destroyed), paused(other.paused), rw(other.rw), input(&rw->getInputRef()), name(other.name) {
+GameObject::GameObject(GameObject&& other) noexcept : destroyed(other.destroyed), active(other.active), rw(other.rw), input(&rw->getInputRef()), name(other.name) {
 	addComponent<Transform>();
 	transform = getComponent<Transform>();
 }
@@ -22,7 +22,7 @@ GameObject::GameObject(GameObject&& other) noexcept : destroyed(other.destroyed)
 GameObject& GameObject::operator=(const GameObject& other) {
 	if (this == &other) return *this;
 	destroyed = other.destroyed;
-	paused = other.paused;
+	active = other.active;
 	removeAllComponents();
 	updateRemoveComponents();
 
@@ -38,7 +38,7 @@ GameObject& GameObject::operator=(const GameObject& other) {
 GameObject& GameObject::operator=(GameObject&& other) noexcept {
 	if (this == &other) return *this;
 	destroyed = other.destroyed;
-	paused = other.paused;
+	active = other.active;
 	
 	components = std::move(other.components);
 
@@ -60,11 +60,11 @@ bool GameObject::isDestroyed() const {
 }
 
 void GameObject::setActivity(bool value) { 
-	paused = !value;
+	active = value;
 }
 
 bool GameObject::getActivity() const {
-	return !paused;
+	return active;
 }
 
 template <typename UniqueComponentType>
@@ -74,7 +74,8 @@ void GameObject::addComponent() {
 	auto newComponentMade = make_unique<UniqueComponentType>();
 	newComponentMade->setGameObject(this, components.size() - 1);
 	components.push_back(move(newComponentMade));
-	
+
+	components.back()->start();
 }
 
 template <typename UniqueComponentType>
@@ -104,6 +105,8 @@ void GameObject::update() {
 void GameObject::addComponent(unique_ptr<base_component> component) {
 	components.push_back(std::move(component));
 	components.back()->setGameObject(this, static_cast<int>(components.size()) - 1);
+	
+	components.back()->start();
 }
 
 

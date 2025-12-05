@@ -79,3 +79,82 @@ Transform* Transform::clone() {
     return new Transform(*this);
 }
 
+Vec3 Transform::getLocalPosition() const {
+    if (parent == nullptr) return position;
+    return position - parent->transform->getLocalPosition();
+}
+
+void Transform::setLocalPosition(const Vec3& position) {
+    if (parent == nullptr) this->position = position;
+    else this->position = position + parent->transform->getLocalPosition();
+}
+
+Vec3 Transform::getWorldPosition() const {
+    return position;
+}
+
+void Transform::setWorldPosition(const Vec3& position) {
+    this->position = position;
+}
+
+Vec3 Transform::getLocalRotation() const {
+    if (parent == nullptr) return rotation;
+    return rotation - parent->transform->getLocalRotation();
+}
+
+void Transform::setLocalRotation(const Vec3& rotation) {
+    if (parent == nullptr) this->rotation = rotation;
+    else this->rotation = rotation + parent->transform->getLocalRotation();
+}
+
+Vec3 Transform::getWorldRotation() const {
+    return rotation;
+}
+
+void Transform::setWorldRotation(const Vec3& rotation) {
+    this->rotation = rotation;
+}
+
+void Transform::getBasis(Vec3& outForward, Vec3& outRight, Vec3& outUp) const {
+    float pitch = rotation.x;
+    float yaw   = rotation.y;
+    float roll  = rotation.z;
+
+    Vec3 worldUp    = Vec3::Up();
+    Vec3 baseFwd    = Vec3::Forward();
+    Vec3 baseRight  = Vec3::Right();
+
+    // yaw
+    Vec3 forward = Vec3::rotate3d(baseFwd,   worldUp, yaw);
+    Vec3 right   = Vec3::rotate3d(baseRight, worldUp, yaw);
+
+    // pitch
+    forward = Vec3::rotate3d(forward, right, pitch);
+    Vec3 up = Vec3::Cross(right, forward).Normalize();
+
+    // roll
+    right = Vec3::rotate3d(right, forward, roll);
+    up    = Vec3::rotate3d(up,    forward, roll);
+
+    outForward = forward.Normalize();
+    outRight   = right.Normalize();
+    outUp      = up.Normalize();
+}
+
+Vec3 Transform::getForward() const {
+    Vec3 f, r, u;
+    getBasis(f, r, u);
+    return f;
+}
+
+Vec3 Transform::getRight() const {
+    Vec3 f, r, u;
+    getBasis(f, r, u);
+    return r;
+}
+
+Vec3 Transform::getUp() const {
+    Vec3 f, r, u;
+    getBasis(f, r, u);
+    return u;
+}

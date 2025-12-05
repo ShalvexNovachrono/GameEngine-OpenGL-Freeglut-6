@@ -169,14 +169,14 @@ struct Vec2 {
     Vec2 operator-() const { return { -x, -y }; }
 
     Vec2 operator/(Vec2 const& other) const {
-        if (other.x == 0 || other.y == 0) {
+        if (other.x == 0.0f || other.y == 0.0f) {
             LOG_ERROR("Division by zero");
         }
         return { x / other.x, y / other.y };
     }
 
     Vec2 operator/(float const& other) const {
-        if (other == 0) {
+        if (other == 0.0f) {
             LOG_ERROR("Division by zero");
         }
         return { x / other, y / other };
@@ -233,7 +233,7 @@ struct Vec2 {
     }
 
     void operator/=(Vec2 const& other) {
-        if (other.x == 0 || other.y == 0) {
+        if (other.x == 0.0f || other.y == 0.0f) {
             LOG_ERROR("Division by zero");
         }
         x /= other.x;
@@ -241,7 +241,7 @@ struct Vec2 {
     }
 
     void operator/=(float const& other) {
-        if (other == 0) {
+        if (other == 0.0f) {
             LOG_ERROR("Division by zero");
         }
         x /= other;
@@ -316,6 +316,15 @@ struct Vec2 {
         return (a.x * b.y) - (a.y * b.x);
     }
 
+    static Vec2 rotate2d(Vec2 const& point, float angleRadians) {
+        float cosAngle = cosf(angleRadians);
+        float sinAngle = sinf(angleRadians);
+        return {
+            point.x * cosAngle - point.y * sinAngle,
+            point.x * sinAngle + point.y * cosAngle
+        };
+    }
+
     friend ostream& operator<<(ostream& os, const Vec2& value) {
         os << "Vector2(" << value.x << ", " << value.y << ")";
         return os;
@@ -372,14 +381,14 @@ struct Vec3 {
     Vec3 operator-() const { return { -x, -y, -z }; }
 
     Vec3 operator/(Vec3 const& other) const {
-        if (other.x == 0 || other.y == 0 || other.z == 0) {
+        if (other.x == 0.0f || other.y == 0.0f || other.z == 0.0f) {
             LOG_ERROR("Division by zero");
         }
         return { x / other.x, y / other.y, z / other.z };
     }
 
     Vec3 operator/(float const& other) const {
-        if (other == 0) {
+        if (other == 0.0f) {
             LOG_ERROR("Division by zero");
         }
         return { x / other, y / other, z / other };
@@ -457,7 +466,7 @@ struct Vec3 {
     }
 
     void operator/=(float const& other) {
-        if (other == 0) {
+        if (other== 0.0f) {
             LOG_ERROR("Division by zero");
         }
         x /= other;
@@ -478,7 +487,7 @@ struct Vec3 {
     }
 
     float& operator[](int i) {
-        if (i == 0) return x;
+        if (i== 0.0f) return x;
         if (i == 1) return y;
         if (i == 2) return z;
         LOG_ERROR("Vec3 index out of range");
@@ -548,6 +557,19 @@ struct Vec3 {
         };
     }
 
+    static Vec3 rotate3d(Vec3 const& point, Vec3 const& axis, float angleRadians) {
+        Vec3 axisNormalized = axis.Normalize();
+
+        float cosAngle = cosf(angleRadians);
+        float sinAngle = sinf(angleRadians);
+
+        Vec3 term1 = axisNormalized * cosAngle;
+        Vec3 term2 = Cross(axisNormalized, point) * sinAngle;
+        Vec3 term3 = axisNormalized * Dot(axisNormalized, point) * (1.0f - cosAngle);
+
+        return term1 + term2 + term3;
+    }
+
     friend ostream& operator<<(ostream& os, const Vec3& value) {
         os << "Vector3(" << value.x << ", " << value.y << ", " << value.z << ")";
         return os;
@@ -568,6 +590,9 @@ struct Vec3 {
 
     static Vec3 Up() { return { 0, 1, 0 }; }
     static Vec3 Down() { return { 0, -1, 0 }; }
+
+    static Vec3 Forward() { return { 0, 0, 1 }; }
+    static Vec3 Backward() { return { 0, 0, -1 }; }
 
     static Vec3 stov3(string s) {
         vector<float> v = parse_string_to_vector_float(s, 3);
@@ -607,14 +632,14 @@ struct Vec4 {
     Vec4 operator-() const { return { -x, -y, -z, -w }; }
 
     Vec4 operator/(Vec4 const& other) const {
-        if (other.x == 0 || other.y == 0 || other.z == 0 || other.w == 0) {
+        if (other.x == 0.0f || other.y == 0.0f || other.z == 0.0f || other.w == 0.0f) {
             LOG_ERROR("Division by zero");
         }
         return { x / other.x, y / other.y, z / other.z, w / other.w };
     }
 
     Vec4 operator/(float const& other) const {
-        if (other == 0) {
+        if (other == 0.0f) {
             LOG_ERROR("Division by zero");
         }
         return { x / other, y / other, z / other, w / other };
@@ -697,7 +722,7 @@ struct Vec4 {
     }
 
     void operator/=(Vec4 const& other) {
-        if (other.x == 0 || other.y == 0 || other.z == 0 || other.w == 0) {
+        if (other.x == 0.0f || other.y == 0.0f || other.z == 0.0f || other.w == 0.0f) {
             LOG_ERROR("Division by zero");
         }
         x /= other.x;
@@ -812,6 +837,8 @@ struct Vec4 {
     static Vec4 Up() { return { 0, 1, 0, 0 }; }
     static Vec4 Down() { return { 0, -1, 0, 0 }; }
 
+    static Vec4 Forward() { return { 0, 0, 1, 0 }; }
+    static Vec4 Backward() { return { 0, 0, -1, 0 }; }
 
     static Vec4 stov4(string s) {
         vector<float> v = parse_string_to_vector_float(s, 4);

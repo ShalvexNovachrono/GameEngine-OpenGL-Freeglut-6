@@ -8,7 +8,7 @@ class Transform;
 class GameObject {
     friend class r_window;
     bool destroyed = false;
-    bool paused = false;
+    bool active = true;
     int id = -1;
     vector<unique_ptr<base_component>> components;
 public:

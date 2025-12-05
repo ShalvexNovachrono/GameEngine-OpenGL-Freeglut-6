@@ -4,12 +4,12 @@
 #include "main.h"
 #include "extra_math.h"
 #include "idh.h"
-#include "camera.h"
 
 class world_container;
+class Camera;
+
 class r_window {
 public:
-	Camera* camera;
 
 	r_window(const int& width, const int&  height, const string& title);
 	~r_window() = default;
