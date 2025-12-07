@@ -107,3 +107,9 @@ void Camera::setGameObject(GameObject* gm, const int& id) {
         input = gameObject->input;
     }
 }
+
+Camera* Camera::clone() {
+    Camera* clone = new Camera();
+    *clone = *this;
+    return clone;
+}

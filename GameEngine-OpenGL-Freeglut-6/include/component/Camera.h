@@ -24,4 +24,5 @@ public:
 	void update() override;
 	void setGameObject(GameObject* gm, const int& id) override;
 	Vec3 center() const { return eye + front; }
+	Camera* clone() override;
 };

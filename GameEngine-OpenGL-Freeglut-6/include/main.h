@@ -9,9 +9,11 @@
 #include <utility>
 #include <memory>
 #include <vector>
+#include <map>
 #include <type_traits>
 #include <random>
 #include <cmath>
+#include <functional>
 #include <Windows.h>
 #include <gl/GL.h>
 #include <gl/GLU.h>

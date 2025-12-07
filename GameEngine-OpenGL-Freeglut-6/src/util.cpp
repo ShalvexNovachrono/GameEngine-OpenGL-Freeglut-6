@@ -4,7 +4,6 @@
 
 
 namespace util {
-
     string read_file_as_string(const string& file_path) {
         ifstream file(file_path);
         if (!file.is_open()) {
@@ -217,6 +216,27 @@ namespace util {
         indices.append(idx_3);
     }
 
+    mesh_holder::mesh_holder() {
+        static_mesh_holder = map<string, static_mesh>();
+    }
+
+    mesh_holder::~mesh_holder() {
+        static_mesh_holder.clear();
+    }
+
+    void mesh_holder::loadStaticMeshToHolder(const string& name, const char* path) {
+        static_mesh_holder[name] = load_obj(path);
+    }
+
+    static_mesh& mesh_holder::getStaticMesh(const string& name) {
+        auto it = static_mesh_holder.find(name);
+        if (it == static_mesh_holder.end()) {
+            throw out_of_range("Static mesh not found: " + name);
+        }
+        return it->second;
+    }
+
+
     texture_data::texture_data() {
     }
 
@@ -306,4 +326,28 @@ namespace util {
         return dataLoaded;
     }
 
+    textures_holder::textures_holder() {
+        textures = map<string, texture_data>();
+    }
+
+    textures_holder::~textures_holder() {
+        textures.clear();
+    }
+
+    void textures_holder::loadTextureToHolder(const string& name, const char* path) {
+        textures[name] = texture_data();
+        textures[name].loadTexture(path);
+    }
+
+    texture_data& textures_holder::getTexture(const string& name) {
+        auto it = textures.find(name);
+        if (it == textures.end()) {
+            throw out_of_range("Texture not found: " + name);
+        }
+        return it->second;
+    }
+
+    
+    textures_holder textures_holder_instance;
+    mesh_holder mesh_holder_instance;
 }

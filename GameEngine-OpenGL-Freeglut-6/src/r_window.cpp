@@ -14,9 +14,6 @@ r_window::r_window(const int& width, const int&  height, const string& title) {
 }
 
 void r_window::init(int argc, char* argv[]) {
-
-	loaded_mesh = util::load_obj("assets/bunny.obj");
-
 	#pragma region Setup Input
 	input = new Input(deltaTime, this);
 
@@ -89,7 +86,17 @@ void r_window::cleanUp() {
 
 void r_window::start() {
 	didTimerGetCalled = true;
+	//util::mesh_holder_instance = util::mesh_holder();
+	//util::textures_holder_instance = util::textures_holder();
 
+	input->addKey('V');
+	input->addKey('N');
+	
+	util::mesh_holder_instance.loadStaticMeshToHolder("Stanford Bunny", "assets/bunny.obj");
+	util::mesh_holder_instance.loadStaticMeshToHolder("Ground", "assets/Flat-Ground-Grass.obj");
+
+	loaded_mesh = util::mesh_holder_instance.getStaticMesh("Stanford Bunny");
+	
 	world->init();
 	
 	//textures.push_back(make_unique<util::texture_data>());
@@ -97,8 +104,6 @@ void r_window::start() {
 }
 
 void r_window::timer() {
-	if (!didTimerGetCalled) start();
-
 	currentFrame = static_cast<float>(glutGet(GLUT_ELAPSED_TIME));              // seconds
 	systemDeltaTime = (currentFrame - lastFrame) / 1000.0f;
 	if (systemDeltaTime <= 0.0f) systemDeltaTime = 1e-6f;
@@ -112,6 +117,18 @@ void r_window::timer() {
 
 	input->update();
 	glLoadIdentity();
+	
+	if (!didTimerGetCalled) start();
+
+	if (input->wasKeyJustPressed('V')) {
+		loaded_mesh = util::mesh_holder_instance.getStaticMesh("Ground");
+	}
+
+	
+	if (input->wasKeyJustPressed('N')) {
+		loaded_mesh = util::mesh_holder_instance.getStaticMesh("Stanford Bunny");
+	}
+	
 	world->update();
 
 

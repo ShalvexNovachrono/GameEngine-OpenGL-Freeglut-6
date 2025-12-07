@@ -184,9 +184,17 @@ namespace util {
 
     void insert_item_in_array(int start_index, array<unsigned int>& indices, const array<string>& face_indices, int size);
 
+    class mesh_holder {
+        map<string, static_mesh> static_mesh_holder;
+    public:
+        mesh_holder();
+        ~mesh_holder();
+
+        void loadStaticMeshToHolder(const string& name, const char* path);
+        static_mesh& getStaticMesh(const string& name);
+    };
 
     class texture_data {
-    private:
         GLuint id = 0;
         int width = 0;
         int height = 0;
@@ -202,5 +210,16 @@ namespace util {
         bool isLoaded() const;
     };
 
+    class textures_holder {
+        map<string, texture_data> textures;
+    public:
+        textures_holder();
+        ~textures_holder();
 
+        void loadTextureToHolder(const string& name, const char* path);
+        texture_data& getTexture(const string& name);
+    };
+    
+    extern textures_holder textures_holder_instance;
+    extern mesh_holder mesh_holder_instance;
 }
