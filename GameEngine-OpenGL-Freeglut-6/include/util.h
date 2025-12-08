@@ -174,11 +174,11 @@ namespace util {
     };
 
 
-    array<string> parse_obj_face_data(string face_data);
+    array<string> parse_obj_face_data(const string& face_data);
 
     static_mesh load_obj(const string& file_path);
 
-    void triangulate_face(const array<unsigned int>& indices, array<unsigned int>& face_indicess);
+    void triangulate_face(const array<unsigned int>& indices, array<unsigned int>& face_indices);
 
     bool valid_index(int index, int size);
 
@@ -200,7 +200,7 @@ namespace util {
         int height = 0;
         bool dataLoaded = false;
     public:
-        texture_data();
+        texture_data() = default;
         ~texture_data();
 
         bool loadTexture(const char* path);

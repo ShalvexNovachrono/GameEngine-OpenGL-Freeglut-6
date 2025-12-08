@@ -1,13 +1,13 @@
 #define STB_IMAGE_IMPLEMENTATION  
-#include "../include/util.h"
 #include "../include/stb_image.h"
+#include "../include/util.h"
 
 
 namespace util {
     string read_file_as_string(const string& file_path) {
         ifstream file(file_path);
         if (!file.is_open()) {
-            LOG_ERROR("read_file_as_string: Could not open file: " + file_path);
+            LOG_ERROR("read_file_as_string: Could not open file: " + file_path)
         }
 
         stringstream buffer;
@@ -16,8 +16,8 @@ namespace util {
     }
 
 
-    array<string> parse_obj_face_data(string face_data) {
-        istringstream face_data_stream(face_data); // with out the first "f " characters
+    array<string> parse_obj_face_data(const string& face_data) {
+        istringstream face_data_stream(face_data); // without the first "f " characters
         array<string> n_words = array<string>();
         string word;
         while (face_data_stream >> word) {
@@ -70,9 +70,9 @@ namespace util {
                 array<string> face_data_parse_2 = parse_obj_face_data(face_data_parse_1);
 
                 for (int i = 0; i < 9; i += 3) {
-                    if (face_data_parse_2[i] != "") face_vertex_count++;
-                    if (face_data_parse_2[i + 1] != "") face_uv_count++;
-                    if (face_data_parse_2[i + 2] != "") face_normal_count++;
+                    if (!face_data_parse_2[i].empty()) face_vertex_count++;
+                    if (!face_data_parse_2[i + 1].empty()) face_uv_count++;
+                    if (!face_data_parse_2[i + 2].empty()) face_normal_count++;
                 }
             }
         }
@@ -95,7 +95,7 @@ namespace util {
                     line_stream >> vertex.x >> vertex.y >> vertex.z;
                 }
                 catch (...) {
-                    LOG_ERROR("load_obj: Invalid vertex data.");
+                    LOG_ERROR("load_obj: Invalid vertex data.")
                 }
                 m.vertices.append(vertex);
             } else if (prefix == "vt") {
@@ -104,7 +104,7 @@ namespace util {
                     line_stream >> uv.x >> uv.y;
                 }
                 catch (...) {
-                    LOG_ERROR("load_obj: Invalid UV data.");
+                    LOG_ERROR("load_obj: Invalid UV data.")
                 }
                 m.uvs.append(uv);
             } else if (prefix == "vn") {
@@ -113,43 +113,23 @@ namespace util {
                     line_stream >> normal.x >> normal.y >> normal.z;
                 }
                 catch (...) {
-                    LOG_ERROR("load_obj: Invalid normal data.");
+                    LOG_ERROR("load_obj: Invalid normal data.")
                 }
                 m.normals.append(normal);
             } else if (prefix == "f") {
                 string face_data_line = line.substr(2, line.size());
-                array<string> paresed_face_data = parse_obj_face_data(face_data_line);
+                array<string> parsed_face_data = parse_obj_face_data(face_data_line);
 
                 array<unsigned int> vertex_indices = array<unsigned int>();
                 array<unsigned int> uv_indices = array<unsigned int>();
                 array<unsigned int> normal_indices = array<unsigned int>();
 
-                // 1/2/3 4/5/6 7/8/9
+                insert_item_in_array(0, vertex_indices, parsed_face_data, m.vertices.size());
+                if (m.uvs.empty() == false)
+                    insert_item_in_array(1, uv_indices, parsed_face_data, m.uvs.size());
 
-                /*
-                v_idx_1 = (paresed_face_data[0] != "") ? stoi(paresed_face_data[0]) - 1 : -1;
-                v_idx_2 = (paresed_face_data[3] != "") ? stoi(paresed_face_data[3]) - 1 : -1;
-                v_idx_3 = (paresed_face_data[6] != "") ? stoi(paresed_face_data[6]) - 1 : -1;
-
-                if (v_idx_1 == -1 || v_idx_2 == -1 || v_idx_3 == -1) {
-                    LOG_ERROR("load_obj: Face vertex index missing or invalid.");
-                }
-
-                if (!valid_index(v_idx_1, m.vertices.size()) || !valid_index(v_idx_2, m.vertices.size()) || !valid_index(v_idx_3, m.vertices.size())) {
-                    LOG_ERROR("load_obj: Face vertex index out of range.");
-                }
-
-                vertex_indices.append(v_idx_1);
-                vertex_indices.append(v_idx_2);
-                vertex_indices.append(v_idx_3);
-                */
-
-                insert_item_in_array(0, vertex_indices, paresed_face_data, m.vertices.size());
-                if (m.uvs.size() > 0)
-                    insert_item_in_array(1, uv_indices, paresed_face_data, m.uvs.size());
-
-                if (m.normals.size() > 0)
-                    insert_item_in_array(2, normal_indices, paresed_face_data, m.normals.size());
+                if (m.normals.empty() == false)
+                    insert_item_in_array(2, normal_indices, parsed_face_data, m.normals.size());
 
                 triangulate_face(vertex_indices, m.v_vertex_indices);
                 triangulate_face(uv_indices, m.vt_uv_indices);
@@ -177,16 +157,16 @@ namespace util {
         m_static.vn_normal_indices_count = m.vn_normal_indices.size();
 
 
-        LOG_DEBUG("load_obj: Loaded " + to_string(vertex_count) + " vertices, " + to_string(uv_count) + " uvs, " + to_string(normal_count) + " normals, " + to_string(face_count) + " faces from " + file_path);
+        LOG_DEBUG("load_obj: Loaded " + to_string(vertex_count) + " vertices, " + to_string(uv_count) + " uvs, " + to_string(normal_count) + " normals, " + to_string(face_count) + " faces from " + file_path)
         return m_static;
     }
 
-    void triangulate_face(const array<unsigned int>& indices, array<unsigned int>& face_indicess) {
+    void triangulate_face(const array<unsigned int>& indices, array<unsigned int>& face_indices) {
         if (indices.size() < 3) return; // Not enough vertices to form a face
         for (int i = 1; i < indices.size() - 1; ++i) {
-            face_indicess.append(indices[0]);
-            face_indicess.append(indices[i]);
-            face_indicess.append(indices[i + 1]);
+            face_indices.append(indices[0]);
+            face_indices.append(indices[i]);
+            face_indices.append(indices[i + 1]);
         }
     }
 
@@ -195,25 +175,21 @@ namespace util {
     }
 
     void insert_item_in_array(int start_index, array<unsigned int>& indices, const array<string>& face_indices, int size) {
-        const int a = start_index;     // 0, 1, or 2
-        const int b = a + 3;           // 3, 4, or 5
-        const int c = a + 6;           // 6, 7, or 8
+        // Loop through all vertices in the face (step by 3 for v/vt/vn structure)
+        for (int i = start_index; i < face_indices.size(); i += 3) {
+            const string& val = face_indices[i];
+            int idx = (!val.empty()) ? stoi(val) - 1 : -1;
 
-        int idx_1 = (face_indices[a] != "") ? stoi(face_indices[a]) - 1 : -1;
-        int idx_2 = (face_indices[b] != "") ? stoi(face_indices[b]) - 1 : -1;
-        int idx_3 = (face_indices[c] != "") ? stoi(face_indices[c]) - 1 : -1;
+            if (idx == -1)
+                LOG_ERROR("load_obj: index missing or invalid.")
 
-        if (idx_1 == -1 || idx_2 == -1 || idx_3 == -1)
-            LOG_ERROR("load_obj: index missing or invalid.");
+            if (!valid_index(idx, size)) {
+                LOG_DEBUG("Index value: " + to_string(idx) + " | Size: " + to_string(size))
+                LOG_ERROR("load_obj: index out of range.")
+            }
 
-        if (!valid_index(idx_1, size) || !valid_index(idx_2, size) || !valid_index(idx_3, size)) {
-            LOG_DEBUG("Index values: " + to_string(idx_1) + ", " + to_string(idx_2) + ", " + to_string(idx_3) + " | Size: " + to_string(size));
-            LOG_ERROR("load_obj: index out of range.");
+            indices.append(idx);
         }
-
-        indices.append(idx_1);
-        indices.append(idx_2);
-        indices.append(idx_3);
     }
 
     mesh_holder::mesh_holder() {
@@ -237,9 +213,6 @@ namespace util {
     }
 
 
-    texture_data::texture_data() {
-    }
-
     texture_data::~texture_data() {
         if (dataLoaded && id != 0) {
             glDeleteTextures(1, &id);
@@ -247,22 +220,22 @@ namespace util {
     }
 
     bool texture_data::loadTexture(const char* path) {
-        BLog_Debug("Attempting to load texture from path: " << path);
+        BLog_Debug("Attempting to load texture from path: " << path)
 
         // Load image using stb_image
         int channels;
         unsigned char* data = stbi_load(path, &width, &height, &channels, 0);
 
         if (!data) {
-            BLog_WARNING("Failed to load texture: " << path);
-            BLog_WARNING("Reason: " << stbi_failure_reason());
+            BLog_WARNING("Failed to load texture: " << path)
+            BLog_WARNING("Reason: " << stbi_failure_reason())
             return false;
         }
 
         // Generate OpenGL texture
         glGenTextures(1, &id);
         if (id == 0) {
-            BLog_WARNING("Failed to generate OpenGL texture ID.");
+            BLog_WARNING("Failed to generate OpenGL texture ID.")
             stbi_image_free(data);
             return false;
         }
@@ -276,18 +249,18 @@ namespace util {
         case 3: format = GL_RGB; break;
         case 4: format = GL_RGBA; break;
         default:
-            BLog_WARNING("Unexpected number of channels: " << channels);
+            BLog_WARNING("Unexpected number of channels: " << channels)
             format = GL_RGB; // Fallback to RGB
             break;
         }
 
         // Upload texture data
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, static_cast<GLint>(format), width, height, 0, format, GL_UNSIGNED_BYTE, data);
 
         // Check for OpenGL errors during texture upload
         GLenum error = glGetError();
         if (error != GL_NO_ERROR) {
-            BLog_ERROR("OpenGL Error during texture upload: " << error);
+            BLog_ERROR("OpenGL Error during texture upload: " << error)
             stbi_image_free(data);
             return false;
         }
@@ -302,8 +275,8 @@ namespace util {
         stbi_image_free(data);
         glBindTexture(GL_TEXTURE_2D, 0);
 
-        BLog_Debug("Texture loaded successfully: " << path);
-        BLog_Debug("Dimensions: " << width << "x" << height << ", Channels: " << channels);
+        BLog_Debug("Texture loaded successfully: " << path)
+        BLog_Debug("Dimensions: " << width << "x" << height << ", Channels: " << channels)
         dataLoaded = true;
 
 

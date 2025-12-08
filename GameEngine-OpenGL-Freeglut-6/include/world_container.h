@@ -13,6 +13,7 @@ public:
 
     void init();
     void update();
+    void display() const;
 
     void addGameObject(GameObject* gameObject);
 };

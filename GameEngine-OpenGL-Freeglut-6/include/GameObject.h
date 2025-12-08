@@ -25,7 +25,8 @@ public:
     GameObject& operator=(GameObject&& other) noexcept;
     
     ~GameObject();
-    void update();
+    void update() const;
+    void display() const;
     
     void setDestroyed();
     bool isDestroyed() const;

@@ -24,13 +24,13 @@ public:
 
 	void draw() const;
 
-	void mouseClick(int button, int state, int x, int y);
+	void mouseClick(int button, int state, int x, int y) const;
 
-	void mouseMotion(int x, int y);
+	void mouseMotion(int x, int y) const;
 
-	void mousePassiveMotion(int x, int y);
+	void mousePassiveMotion(int x, int y) const;
 
-	void mouseScrollwheel(int button, int scrollDirection, int x, int y);
+	void mouseScrollwheel(int button, int scrollDirection, int x, int y) const;
 
 	float getDeltaTime() const { return deltaTime; }
 
@@ -40,7 +40,7 @@ public:
 
 	void setTimeScale(float scale) { timeScale = scale; }
 
-	void reshapeWindow(int width, int height);
+	void reshapeWindow(const int& width, const int& height);
 
 	int getFps() const { return fps; }
 
@@ -52,7 +52,7 @@ public:
 
 	Vec2 getWindowSize() const { return { static_cast<float>(width), static_cast<float>(height) }; }
 
-	Vec2 getWindowPosition() const { return { static_cast<float>(glutGet(GLUT_WINDOW_X)), static_cast<float>(glutGet(GLUT_WINDOW_Y))}; }
+	static Vec2 getWindowPosition() { return { static_cast<float>(glutGet(GLUT_WINDOW_X)), static_cast<float>(glutGet(GLUT_WINDOW_Y))}; }
 
 	Input& getInputRef();
 private:

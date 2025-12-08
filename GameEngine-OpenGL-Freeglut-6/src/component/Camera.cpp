@@ -81,7 +81,7 @@ void Camera::update() {
 
     if (scrollDirection != 0) {
         float current_fov = rw->getFov();
-        float new_fov = current_fov + (scrollDirection * -2.0f);
+        float new_fov = current_fov + (static_cast<float>(scrollDirection) * -2.0f);
         rw->setFov(new_fov);
     }
 

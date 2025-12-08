@@ -15,7 +15,7 @@ class Camera : public base_component {
 
 public:
 	Vec3 eye, up, front;
-	float movement_speed = 1.0f;
+	float movement_speed = 10.0f;
 	float rotation_sensitivity = 0.1f;
 	bool first_mouse_focus = true;
 

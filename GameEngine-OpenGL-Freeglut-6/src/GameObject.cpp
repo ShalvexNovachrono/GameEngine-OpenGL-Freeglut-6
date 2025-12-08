@@ -1,6 +1,7 @@
 #include "../include/GameObject.h"
 #include "../include/r_window.h"
 #include "../include/component/Transform.h"
+#include "../include/component/Renderer.h"
 
 GameObject::GameObject(r_window* rw, const string& name, const int& id) : rw(rw), input(&rw->getInputRef()) {
 	this->id = id;
@@ -73,7 +74,7 @@ void GameObject::addComponent() {
 	
 	auto newComponentMade = make_unique<UniqueComponentType>();
 	newComponentMade->setGameObject(this, components.size() - 1);
-	components.push_back(move(newComponentMade));
+	components.push_back(std::move(newComponentMade));
 
 	components.back()->start();
 }
@@ -98,8 +99,17 @@ bool GameObject::hasComponent(UniqueComponentType* Component) {
 	return false;
 }
 
-void GameObject::update() {
+void GameObject::update() const {
 	updateComponents();
+}
+
+void GameObject::display() const
+{
+	if (Renderer* renderer = getComponent<Renderer>()) {
+		if (renderer->isRemoveComponent()) return;
+		if (renderer->isDisableComponent()) return;
+		renderer->display();
+	}
 }
 
 void GameObject::addComponent(unique_ptr<base_component> component) {

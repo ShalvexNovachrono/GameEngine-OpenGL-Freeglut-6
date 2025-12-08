@@ -5,7 +5,6 @@
 #include "../include/component/Camera.h"
 
 
-util::static_mesh loaded_mesh;
 
 r_window::r_window(const int& width, const int&  height, const string& title) {
     this->width = width;
@@ -67,15 +66,19 @@ void r_window::init(int argc, char* argv[]) {
 	glMatrixMode(GL_MODELVIEW);
 
 
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK); 
-	glEnable(GL_DEPTH_TEST);
+	
+    glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	//glEnable(GL_LIGHTING);
+
+	
 	glutMainLoop();
 
 }
@@ -86,21 +89,8 @@ void r_window::cleanUp() {
 
 void r_window::start() {
 	didTimerGetCalled = true;
-	//util::mesh_holder_instance = util::mesh_holder();
-	//util::textures_holder_instance = util::textures_holder();
 
-	input->addKey('V');
-	input->addKey('N');
-	
-	util::mesh_holder_instance.loadStaticMeshToHolder("Stanford Bunny", "assets/bunny.obj");
-	util::mesh_holder_instance.loadStaticMeshToHolder("Ground", "assets/Flat-Ground-Grass.obj");
-
-	loaded_mesh = util::mesh_holder_instance.getStaticMesh("Stanford Bunny");
-	
 	world->init();
-	
-	//textures.push_back(make_unique<util::texture_data>());
-	//textures.back()->loadTexture("assets/Test_grid_2000x2000.png");
 }
 
 void r_window::timer() {
@@ -112,33 +102,21 @@ void r_window::timer() {
 	fps = static_cast<int>(1.0f / systemDeltaTime);
 
 	//-------Debug-Info-------//
-	LOG_DEBUG_R("FPS: " + to_string(fps) + " | Delta Time: " + to_string(deltaTime) + " | System Delta Time: " + to_string(systemDeltaTime));
+	LOG_DEBUG_R("FPS: " + to_string(fps) + " | Delta Time: " + to_string(deltaTime) + " | System Delta Time: " + to_string(systemDeltaTime))
 	//-------End-------//
 
 	input->update();
 	glLoadIdentity();
 	
 	if (!didTimerGetCalled) start();
-
-	if (input->wasKeyJustPressed('V')) {
-		loaded_mesh = util::mesh_holder_instance.getStaticMesh("Ground");
-	}
-
-	
-	if (input->wasKeyJustPressed('N')) {
-		loaded_mesh = util::mesh_holder_instance.getStaticMesh("Stanford Bunny");
-	}
 	
 	world->update();
-
-
-
-
+	
 	glutPostRedisplay();
 }
 
 void r_window::draw() const {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
 
 	glMatrixMode(GL_MODELVIEW);
@@ -149,37 +127,29 @@ void r_window::draw() const {
 	glRotatef(worldRotaion.y, 0, 1, 0);
 	glRotatef(worldRotaion.z, 0, 0, 1);
 
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, sizeof(Vec3), loaded_mesh.vertices);
-		glPushMatrix();
-			glDrawElements(GL_TRIANGLES, loaded_mesh.v_vertex_indices_count, GL_UNSIGNED_INT, loaded_mesh.v_vertex_indices);
-		glPopMatrix();
-	glDisableClientState(GL_VERTEX_ARRAY);
-
-
+	world->display();
 
 	glPopMatrix();
 	glutSwapBuffers();
 }
 
-void r_window::mouseClick(int button, int state, int x, int y) {
+void r_window::mouseClick(int button, int state, int x, int y) const {
 	input->setMouseClick(button, state, Vec2(static_cast<float>(x), static_cast<float>(y)));
 }
 
-void r_window::mouseMotion(int x, int y) {
+void r_window::mouseMotion(int x, int y) const {
 	input->setMotionMousePosition(Vec2(static_cast<float>(x), static_cast<float>(y)));
 }
 
-void r_window::mousePassiveMotion(int x, int y) {
+void r_window::mousePassiveMotion(int x, int y) const {
 	input->setPassiveMousePosition(Vec2(static_cast<float>(x), static_cast<float>(y)));
 }
 
-void r_window::mouseScrollwheel(int button, int scrollDirection, int x, int y) {
+void r_window::mouseScrollwheel(int button, int scrollDirection, int x, int y) const {
 	input->setMouseScrollwheelValues(button, scrollDirection, Vec2(static_cast<float>(x), static_cast<float>(y)));
 }
 
-void r_window::reshapeWindow(int width, int height) {
+void r_window::reshapeWindow(const int& width, const int&  height) {
 	this->width = width;
 	this->height = height;
 	glutReshapeWindow(width, height);

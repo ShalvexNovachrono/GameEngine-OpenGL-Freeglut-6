@@ -5,13 +5,21 @@
 
 class Renderer : public base_component {
     util::static_mesh mesh;
+    bool isMeshLoaded = false;
     util::texture_data texture;
+    bool isTextureLoaded = false;
     vector<function<void()>> callbacks;
 public:
-    Renderer();
+    Vec4 color = { 1, 1, 1, 1 };
+    
+    Renderer() = default;
     
     void start() override;
     void update() override;
+    void display();
+
+    void setMesh(const string& meshName);
+    void setTexture(const string& textureName);
     
     void addCallback(function<void()> callback);
     void removeCallback(function<void()> callback);
