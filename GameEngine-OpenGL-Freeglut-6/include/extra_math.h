@@ -16,6 +16,16 @@ static float radians_to_degrees(float radians) {
     return radians * (180.0f / pi);
 }
 
+
+static int parse_number(const char*& ptr) {
+    int result = 0;
+    while (*ptr >= '0' && *ptr <= '9') {
+        result = result * 10 + (*ptr - '0');
+        ptr++;
+    }
+    return result;
+}
+
 /// <summary>
 /// This function clamps a value between a minimum and maximum value.
 /// </summary>

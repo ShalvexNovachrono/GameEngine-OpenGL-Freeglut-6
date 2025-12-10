@@ -3,19 +3,19 @@
 #include "../include/component/Transform.h"
 #include "../include/component/Renderer.h"
 
-GameObject::GameObject(r_window* rw, const string& name, const int& id) : rw(rw), input(&rw->getInputRef()) {
+GameObject::GameObject(r_window* rw, const string& name, const int& id) : rw(rw) {
 	this->id = id;
 	this->name = name;
 	addComponent<Transform>();
 	transform = getComponent<Transform>();
 }
 
-GameObject::GameObject(const GameObject& other) : destroyed(other.destroyed), active(other.active), rw(other.rw), input(&rw->getInputRef()), name(other.name) {
+GameObject::GameObject(const GameObject& other) : destroyed(other.destroyed), active(other.active), rw(other.rw), name(other.name) {
 	addComponent<Transform>();
 	transform = getComponent<Transform>();
 }
 
-GameObject::GameObject(GameObject&& other) noexcept : destroyed(other.destroyed), active(other.active), rw(other.rw), input(&rw->getInputRef()), name(other.name) {
+GameObject::GameObject(GameObject&& other) noexcept : destroyed(other.destroyed), active(other.active), rw(other.rw), name(other.name) {
 	addComponent<Transform>();
 	transform = getComponent<Transform>();
 }
@@ -31,7 +31,6 @@ GameObject& GameObject::operator=(const GameObject& other) {
 	 	components.push_back(unique_ptr<base_component>(component->clone()));
 	}
 	rw = other.rw;
-	input = &rw->getInputRef();
 	name = other.name;
 	return *this;
 }
@@ -44,7 +43,6 @@ GameObject& GameObject::operator=(GameObject&& other) noexcept {
 	components = std::move(other.components);
 
 	rw = other.rw;
-	input = &rw->getInputRef();
 	name = other.name;
 	return *this;
 }

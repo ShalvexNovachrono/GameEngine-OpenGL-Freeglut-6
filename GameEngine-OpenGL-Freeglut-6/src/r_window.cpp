@@ -14,7 +14,7 @@ r_window::r_window(const int& width, const int&  height, const string& title) {
 
 void r_window::init(int argc, char* argv[]) {
 	#pragma region Setup Input
-	input = new Input(deltaTime, this);
+	util::input = new Input(deltaTime, this);
 
 	Input::InputAxis VerticalAxis("Vertical");
 	VerticalAxis.addKey('W', 'S');
@@ -27,13 +27,13 @@ void r_window::init(int argc, char* argv[]) {
 	Input::InputAxis RotateAxis("Rotate");
 	RotateAxis.addKey('R', 'T');
 
-	input->addIAxis(VerticalAxis);
-	input->addIAxis(HorizontalAxis);
-	input->addIAxis(RotateAxis);
+	util::input->addIAxis(VerticalAxis);
+	util::input->addIAxis(HorizontalAxis);
+	util::input->addIAxis(RotateAxis);
 
 
-	input->addKey(VK_ESCAPE);
-	input->addKey('L');
+	util::input->addKey(VK_ESCAPE);
+	util::input->addKey('L');
 	#pragma endregion
 
 	#pragma region Setup World
@@ -84,7 +84,6 @@ void r_window::init(int argc, char* argv[]) {
 }
 
 void r_window::cleanUp() {
-	delete input;
 }
 
 void r_window::start() {
@@ -105,7 +104,7 @@ void r_window::timer() {
 	LOG_DEBUG_R("FPS: " + to_string(fps) + " | Delta Time: " + to_string(deltaTime) + " | System Delta Time: " + to_string(systemDeltaTime))
 	//-------End-------//
 
-	input->update();
+	util::input->update();
 	glLoadIdentity();
 	
 	if (!didTimerGetCalled) start();
@@ -134,19 +133,19 @@ void r_window::draw() const {
 }
 
 void r_window::mouseClick(int button, int state, int x, int y) const {
-	input->setMouseClick(button, state, Vec2(static_cast<float>(x), static_cast<float>(y)));
+	util::input->setMouseClick(button, state, Vec2(static_cast<float>(x), static_cast<float>(y)));
 }
 
 void r_window::mouseMotion(int x, int y) const {
-	input->setMotionMousePosition(Vec2(static_cast<float>(x), static_cast<float>(y)));
+	util::input->setMotionMousePosition(Vec2(static_cast<float>(x), static_cast<float>(y)));
 }
 
 void r_window::mousePassiveMotion(int x, int y) const {
-	input->setPassiveMousePosition(Vec2(static_cast<float>(x), static_cast<float>(y)));
+	util::input->setPassiveMousePosition(Vec2(static_cast<float>(x), static_cast<float>(y)));
 }
 
 void r_window::mouseScrollwheel(int button, int scrollDirection, int x, int y) const {
-	input->setMouseScrollwheelValues(button, scrollDirection, Vec2(static_cast<float>(x), static_cast<float>(y)));
+	util::input->setMouseScrollwheelValues(button, scrollDirection, Vec2(static_cast<float>(x), static_cast<float>(y)));
 }
 
 void r_window::reshapeWindow(const int& width, const int&  height) {
@@ -167,10 +166,6 @@ void r_window::updateWindowDetails() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glViewport(0, 0, width, height);
-	gluPerspective(fov, width / height, 0.1, 1800);
+	gluPerspective(fov, static_cast<float>(width) / static_cast<float>(height), 0.1, 1800);
 	glMatrixMode(GL_MODELVIEW);
-}
-
-Input& r_window::getInputRef() {
-	return *input;
 }

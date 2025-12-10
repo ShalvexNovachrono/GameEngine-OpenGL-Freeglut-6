@@ -58,12 +58,12 @@ void Renderer::display() {
 }
 
 void Renderer::setMesh(const string& meshName) {
-    mesh = util::mesh_holder_instance.getStaticMesh(meshName);
+    mesh = util::mesh_collection_instance.getStaticMesh(meshName);
     isMeshLoaded = true;
 }
 
 void Renderer::setTexture(const string& textureName) {
-    texture = util::textures_holder_instance.getTexture(textureName);
+    texture = util::textures_data_collection_instance.getTexture(textureName);
     isTextureLoaded = true;
 }
 

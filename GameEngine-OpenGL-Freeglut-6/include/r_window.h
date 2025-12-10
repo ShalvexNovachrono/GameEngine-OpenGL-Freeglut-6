@@ -53,8 +53,6 @@ public:
 	Vec2 getWindowSize() const { return { static_cast<float>(width), static_cast<float>(height) }; }
 
 	static Vec2 getWindowPosition() { return { static_cast<float>(glutGet(GLUT_WINDOW_X)), static_cast<float>(glutGet(GLUT_WINDOW_Y))}; }
-
-	Input& getInputRef();
 private:
     int width = 100, height = 100;
     string title;
@@ -71,10 +69,6 @@ private:
 	const float maximumFov = 110.0f;
 	const float frameRate = 145;
 	const int frameTime = static_cast<int>(1000.0f / frameRate);
-
-
-
-	Input* input;
 	world_container* world;
 
 	Vec3 worldPostion = Vec3(0, 0, 0);

@@ -22,67 +22,53 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="extra_math.h">
-      <Filter>Files\includes</Filter>
-    </ClInclude>
-    <ClInclude Include="main.h">
-      <Filter>Files\includes</Filter>
-    </ClInclude>
-    <ClInclude Include="r_window.h">
-      <Filter>Files\includes</Filter>
-    </ClInclude>
-    <ClInclude Include="camera.h">
-      <Filter>Files\includes</Filter>
-    </ClInclude>
-    <ClInclude Include="util.h">
-      <Filter>Files\includes</Filter>
-    </ClInclude>
-    <ClInclude Include="idh.h">
-      <Filter>Files\includes</Filter>
-    </ClInclude>
-    <ClInclude Include="callbacks.h">
-      <Filter>Files\includes</Filter>
-    </ClInclude>
-    <ClInclude Include="stb_image.h">
-      <Filter>Files\includes</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Files\includes</Filter>
-    </ClInclude>
-    <ClInclude Include="base_component.h">
-      <Filter>Files\includes\components</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>Files\includes\components</Filter>
-    </ClInclude>
+    <ClInclude Include="include/component/base_component.h" />
+    <ClInclude Include="include/callbacks.h" />
+    <ClInclude Include="include/extra_math.h" />
+    <ClInclude Include="include/GameObject.h" />
+    <ClInclude Include="include/idh.h" />
+    <ClInclude Include="include/main.h" />
+    <ClInclude Include="include/r_window.h" />
+    <ClInclude Include="include/stb_image.h" />
+    <ClInclude Include="include/component/Transform.h" />
+    <ClInclude Include="include/util.h" />
+    <ClInclude Include="include\component\Camera.h" />
+    <ClInclude Include="include\component\Renderer.h" />
+    <ClInclude Include="include\world_container.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Files\src</Filter>
+    <ClCompile Include="src/component/base_component.cpp">
+      <Filter>Files</Filter>
     </ClCompile>
-    <ClCompile Include="r_window.cpp">
-      <Filter>Files\src</Filter>
+    <ClCompile Include="src/callbacks.cpp">
+      <Filter>Files</Filter>
     </ClCompile>
-    <ClCompile Include="callbacks.cpp">
-      <Filter>Files\src</Filter>
+    <ClCompile Include="src/GameObject.cpp">
+      <Filter>Files</Filter>
     </ClCompile>
-    <ClCompile Include="util.cpp">
-      <Filter>Files\src</Filter>
+    <ClCompile Include="src/idh.cpp">
+      <Filter>Files</Filter>
     </ClCompile>
-    <ClCompile Include="idh.cpp">
-      <Filter>Files\src</Filter>
+    <ClCompile Include="src/main.cpp">
+      <Filter>Files</Filter>
     </ClCompile>
-    <ClCompile Include="camera.cpp">
-      <Filter>Files\src</Filter>
+    <ClCompile Include="src/r_window.cpp">
+      <Filter>Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Files\src</Filter>
+    <ClCompile Include="src/component/Transform.cpp">
+      <Filter>Files</Filter>
     </ClCompile>
-    <ClCompile Include="base_component.cpp">
-      <Filter>Files\src\components</Filter>
+    <ClCompile Include="src/util.cpp">
+      <Filter>Files</Filter>
     </ClCompile>
-    <ClCompile Include="Transform.cpp">
-      <Filter>Files\src\components</Filter>
+    <ClCompile Include="src\component\Camera.cpp">
+      <Filter>Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\component\Renderer.cpp">
+      <Filter>Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\world_container.cpp">
+      <Filter>Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

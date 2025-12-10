@@ -1,6 +1,5 @@
 #pragma once
 #include "main.h"
-#include "idh.h"
 #include "component/base_component.h"
 
 class Transform;
@@ -13,7 +12,6 @@ class GameObject {
     vector<unique_ptr<base_component>> components;
 public:
     r_window* rw;
-    Input* input;
     Transform* transform = nullptr;
 
     string name;

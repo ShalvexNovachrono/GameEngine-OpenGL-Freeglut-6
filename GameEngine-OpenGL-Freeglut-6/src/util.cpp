@@ -2,12 +2,17 @@
 #include "../include/stb_image.h"
 #include "../include/util.h"
 
+#include <strstream>
+
+#include "../include/idh.h"
+
+
 
 namespace util {
-    string read_file_as_string(const string& file_path) {
+    string loadFileContentToString(const string& file_path) {
         ifstream file(file_path);
         if (!file.is_open()) {
-            LOG_ERROR("read_file_as_string: Could not open file: " + file_path)
+            LOG_ERROR("loadFileContentToString: Could not open file: " + file_path)
         }
 
         stringstream buffer;
@@ -15,10 +20,92 @@ namespace util {
         return buffer.str();
     }
 
+    static_mesh static_mesh::loadObj(const string& filePath) {
+        string fileContent = loadFileContentToString(filePath);
 
-    array<string> parse_obj_face_data(const string& face_data) {
+        istringstream fileStream(fileContent);
+
+        string line;
+
+        static_mesh m_static;
+        dynamic_mesh_data m;
+        
+        size_t fileSize = fileContent.size();
+        int estimatedVertices = static_cast<int>(fileSize) / 2; // Estimate
+        m.vertices.reserve(estimatedVertices);
+        m.uvs.reserve(estimatedVertices);
+        m.normals.reserve(estimatedVertices);
+
+        while (getline(fileStream, line)) {
+            if (line.size() < 2) continue; // Skip empty or too short lines
+
+            char prefix = line[0];
+
+            if (prefix == 'v') {
+                if (line[1] == ' ') {
+                    m_static.vertex_count++;
+
+                    istringstream lineStream(line.substr(2));
+                    
+                    Vec3 vertex;
+                    try {
+                        lineStream >> vertex.x >> vertex.y >> vertex.z;
+                    } catch (...) {
+                        LOG_WARNING("loadObj: Invalid vertex data.")
+                    }
+                    m.vertices.append(vertex);
+                } else if (line[1] == 't') { // vt
+                    m_static.uv_count++;
+
+                    istringstream lineStream(line.substr(3));
+                    
+                    Vec2 uv;
+                    try {
+                        lineStream >> uv.x >> uv.y;
+                    } catch (...) {
+                        LOG_WARNING("loadObj: Invalid UV data.")
+                    }
+                    m.uvs.append(uv);
+                }  else if (line[1] == 'n') { // vn
+                    m_static.normal_count++;
+
+                    istringstream lineStream(line.substr(3));
+                    
+                    Vec3 normal;
+                    try {
+                        lineStream >> normal.x >> normal.y >> normal.z;
+                    } catch (...) {
+                        LOG_WARNING("loadObj: Invalid normal data.")
+                    }
+                    m.normals.append(normal);
+                } 
+            } else if (prefix == 'f') {
+                m_static.face_count++;
+                
+                parseFaceDataFaster(line, m);
+            }
+        }
+
+        m_static.vertices = m.vertices.data();
+        m_static.uvs = m.uvs.data();
+        m_static.normals = m.normals.data();
+        m_static.faces = m.faces.data();
+        
+        m_static.v_vertex_indices = m.v_vertex_indices.data();
+        m_static.vt_uv_indices = m.vt_uv_indices.data();
+        m_static.vn_normal_indices = m.vn_normal_indices.data();
+
+        m_static.v_vertex_indices_count = m.v_vertex_indices.size();
+        m_static.vt_uv_indices_count = m.vt_uv_indices.size();
+        m_static.vn_normal_indices_count = m.vn_normal_indices.size();
+
+        LOG_DEBUG("loadObj: Loaded " + to_string(m_static.vertex_count) + " vertices, " + to_string(m_static.uv_count) + " uvs, " + to_string(m_static.normal_count) + " normals, " + to_string(m_static.face_count) + " faces from " + filePath)
+        return m_static;
+    }
+
+    array<string> static_mesh::parseObjFaceData(const string& face_data) {
         istringstream face_data_stream(face_data); // without the first "f " characters
-        array<string> n_words = array<string>();
+        array<string> n_words;
         string word;
         while (face_data_stream >> word) {
             istringstream sp(word);
@@ -34,134 +121,43 @@ namespace util {
         return n_words;
     }
 
-    static_mesh load_obj(const string& file_path) {
-        string file_content = read_file_as_string(file_path);
-
-        istringstream file_stream(file_content);
-
-        string line;
-
-        int vertex_count = 0;
-        int uv_count = 0;
-        int normal_count = 0;
-        int face_count = 0;
-        int face_vertex_count = 0;
-        int face_uv_count = 0;
-        int face_normal_count = 0;
-
-
-        while (getline(file_stream, line)) {
-            size_t char_space_pos = static_cast<size_t>((line.find_first_of(' ') != string::npos) ? line.find_first_of(' ') + 1 : 0);
-            string parsed_line = line.substr(0, char_space_pos - 1);
-            if (parsed_line == "v") {
-                vertex_count++;
-            }
-            else if (parsed_line == "vt") {
-                uv_count++;
-            }
-            else if (parsed_line == "vn") {
-                normal_count++;
-            }
-            else if (parsed_line == "f") {
-                face_count++;
-
-                string face_data_parse_1 = line.substr(char_space_pos, line.size());
-
-                array<string> face_data_parse_2 = parse_obj_face_data(face_data_parse_1);
-
-                for (int i = 0; i < 9; i += 3) {
-                    if (!face_data_parse_2[i].empty()) face_vertex_count++;
-                    if (!face_data_parse_2[i + 1].empty()) face_uv_count++;
-                    if (!face_data_parse_2[i + 2].empty()) face_normal_count++;
+    void static_mesh::parseFaceDataFaster(const string& line, dynamic_mesh_data& m) {
+        const char* ptr = line.c_str() + 2; // Skip "f "
+    
+        array<unsigned int> vertex_indices;
+        array<unsigned int> uv_indices;
+        array<unsigned int> normal_indices;
+    
+        while (*ptr) {
+            // Skip whitespace
+            while (*ptr == ' ' || *ptr == '\t') ptr++;
+            if (!*ptr) break;
+        
+            // Parse vertex/uv/normal indices directly
+            int v = parse_number(ptr);
+            int vt = 0, vn = 0;
+        
+            if (*ptr == '/') {
+                ptr++;
+                vt = parse_number(ptr);
+                if (*ptr == '/') {
+                    ptr++;
+                    vn = parse_number(ptr);
                 }
             }
+        
+            if (v > 0) vertex_indices.append(v - 1);
+            if (vt > 0) uv_indices.append(vt - 1);
+            if (vn > 0) normal_indices.append(vn - 1);
         }
-
-        file_stream.clear();
-        file_stream.seekg(0, ios::beg); // Reset stream to beginning
-
-        mesh m;
-
-        while (getline(file_stream, line)) {
-            if (line.size() < 2) continue; // Skip empty or too short lines
-
-            istringstream line_stream(line);
-            string prefix;
-            line_stream >> prefix;
-
-            if (prefix == "v") {
-                Vec3 vertex;
-                try {
-                    line_stream >> vertex.x >> vertex.y >> vertex.z;
-                }
-                catch (...) {
-                    LOG_ERROR("load_obj: Invalid vertex data.")
-                }
-                m.vertices.append(vertex);
-            } else if (prefix == "vt") {
-                Vec2 uv;
-                try {
-                    line_stream >> uv.x >> uv.y;
-                }
-                catch (...) {
-                    LOG_ERROR("load_obj: Invalid UV data.")
-                }
-                m.uvs.append(uv);
-            } else if (prefix == "vn") {
-                Vec3 normal;
-                try {
-                    line_stream >> normal.x >> normal.y >> normal.z;
-                }
-                catch (...) {
-                    LOG_ERROR("load_obj: Invalid normal data.")
-                }
-                m.normals.append(normal);
-            } else if (prefix == "f") {
-                string face_data_line = line.substr(2, line.size());
-                array<string> parsed_face_data = parse_obj_face_data(face_data_line);
-
-                array<unsigned int> vertex_indices = array<unsigned int>();
-                array<unsigned int> uv_indices = array<unsigned int>();
-                array<unsigned int> normal_indices = array<unsigned int>();
-
-                insert_item_in_array(0, vertex_indices, parsed_face_data, m.vertices.size());
-                if (m.uvs.empty() == false)
-                    insert_item_in_array(1, uv_indices, parsed_face_data, m.uvs.size());
-
-                if (m.normals.empty() == false)
-                    insert_item_in_array(2, normal_indices, parsed_face_data, m.normals.size());
-
-                triangulate_face(vertex_indices, m.v_vertex_indices);
-                triangulate_face(uv_indices, m.vt_uv_indices);
-                triangulate_face(normal_indices, m.vn_normal_indices);
-            }
-        }
-
-        static_mesh m_static;
-        m_static.vertices = m.vertices.copy_as_pointer();
-        m_static.uvs = m.uvs.copy_as_pointer();
-        m_static.normals = m.normals.copy_as_pointer();
-        m_static.faces = m.faces.copy_as_pointer();
-
-        m_static.vertex_count = vertex_count;
-        m_static.uv_count = uv_count;
-        m_static.normal_count = normal_count;
-        m_static.face_count = face_count;
-
-        m_static.v_vertex_indices = m.v_vertex_indices.copy_as_pointer();
-        m_static.vt_uv_indices = m.vt_uv_indices.copy_as_pointer();
-        m_static.vn_normal_indices = m.vn_normal_indices.copy_as_pointer();
-
-        m_static.v_vertex_indices_count = m.v_vertex_indices.size();
-        m_static.vt_uv_indices_count = m.vt_uv_indices.size();
-        m_static.vn_normal_indices_count = m.vn_normal_indices.size();
-
-
-        LOG_DEBUG("load_obj: Loaded " + to_string(vertex_count) + " vertices, " + to_string(uv_count) + " uvs, " + to_string(normal_count) + " normals, " + to_string(face_count) + " faces from " + file_path)
-        return m_static;
+    
+        triangulate_face(vertex_indices, m.v_vertex_indices);
+        triangulate_face(uv_indices, m.vt_uv_indices);
+        triangulate_face(normal_indices, m.vn_normal_indices);
     }
 
-    void triangulate_face(const array<unsigned int>& indices, array<unsigned int>& face_indices) {
+
+    void static_mesh::triangulate_face(const array<unsigned int>& indices, array<unsigned int>& face_indices) {
         if (indices.size() < 3) return; // Not enough vertices to form a face
         for (int i = 1; i < indices.size() - 1; ++i) {
             face_indices.append(indices[0]);
@@ -170,44 +166,44 @@ namespace util {
         }
     }
 
-    bool valid_index(int index, int size) {
+    bool static_mesh::valid_index(int index, int size) {
         return index >= 0 && index < size;
     }
 
-    void insert_item_in_array(int start_index, array<unsigned int>& indices, const array<string>& face_indices, int size) {
+    void static_mesh::insert_item_in_array(int start_index, array<unsigned int>& indices, const array<string>& face_indices, int size) {
         // Loop through all vertices in the face (step by 3 for v/vt/vn structure)
         for (int i = start_index; i < face_indices.size(); i += 3) {
             const string& val = face_indices[i];
-            int idx = (!val.empty()) ? stoi(val) - 1 : -1;
+            int index = (!val.empty()) ? stoi(val) - 1 : -1;
 
-            if (idx == -1)
-                LOG_ERROR("load_obj: index missing or invalid.")
+            if (index == -1)
+                LOG_ERROR("loadObj: index missing or invalid.")
 
-            if (!valid_index(idx, size)) {
-                LOG_DEBUG("Index value: " + to_string(idx) + " | Size: " + to_string(size))
-                LOG_ERROR("load_obj: index out of range.")
+            if (!valid_index(index, size)) {
+                LOG_DEBUG("Index value: " + to_string(index) + " | Size: " + to_string(size))
+                LOG_ERROR("loadObj: index out of range.")
             }
 
-            indices.append(idx);
+            indices.append(index);
         }
     }
 
-    mesh_holder::mesh_holder() {
+    mesh_collection::mesh_collection() {
         static_mesh_holder = map<string, static_mesh>();
     }
 
-    mesh_holder::~mesh_holder() {
+    mesh_collection::~mesh_collection() {
         static_mesh_holder.clear();
     }
 
-    void mesh_holder::loadStaticMeshToHolder(const string& name, const char* path) {
-        static_mesh_holder[name] = load_obj(path);
+    void mesh_collection::loadStaticMeshToHolder(const string& name, const char* path) {
+        static_mesh_holder[name] = static_mesh::loadObj(path);
     }
 
-    static_mesh& mesh_holder::getStaticMesh(const string& name) {
+    static_mesh& mesh_collection::getStaticMesh(const string& name) {
         auto it = static_mesh_holder.find(name);
         if (it == static_mesh_holder.end()) {
-            throw out_of_range("Static mesh not found: " + name);
+            throw out_of_range("Static dynamic_mesh_data not found: " + name);
         }
         return it->second;
     }
@@ -299,20 +295,20 @@ namespace util {
         return dataLoaded;
     }
 
-    textures_holder::textures_holder() {
+    textures_data_collection::textures_data_collection() {
         textures = map<string, texture_data>();
     }
 
-    textures_holder::~textures_holder() {
+    textures_data_collection::~textures_data_collection() {
         textures.clear();
     }
 
-    void textures_holder::loadTextureToHolder(const string& name, const char* path) {
+    void textures_data_collection::loadTextureToHolder(const string& name, const char* path) {
         textures[name] = texture_data();
         textures[name].loadTexture(path);
     }
 
-    texture_data& textures_holder::getTexture(const string& name) {
+    texture_data& textures_data_collection::getTexture(const string& name) {
         auto it = textures.find(name);
         if (it == textures.end()) {
             throw out_of_range("Texture not found: " + name);
@@ -321,6 +317,7 @@ namespace util {
     }
 
     
-    textures_holder textures_holder_instance;
-    mesh_holder mesh_holder_instance;
+    textures_data_collection textures_data_collection_instance;
+    mesh_collection mesh_collection_instance;
+    Input* input;
 }

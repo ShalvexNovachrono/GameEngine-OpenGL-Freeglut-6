@@ -9,18 +9,21 @@ world_container::world_container(r_window* rw) : rw(rw) {
 }
 
 void world_container::init() {
-    rw->getInputRef().addKey('U');
-    rw->getInputRef().addKey('P');
+    
+    util::input->addKey('U');
+    util::input->addKey('P');
+    util::input->addKey(VK_DELETE);
 	
-    util::mesh_holder_instance.loadStaticMeshToHolder("Cube", "assets/Cube.obj");
-    util::mesh_holder_instance.loadStaticMeshToHolder("Stanford Bunny", "assets/bunny.obj");
-    util::mesh_holder_instance.loadStaticMeshToHolder("House", "assets/Residential Buildings 001.obj");
-    util::mesh_holder_instance.loadStaticMeshToHolder("Ground", "assets/Flat-Ground-Grass.obj");
-    util::textures_holder_instance.loadTextureToHolder("testImage", "assets/Shalvex Novachrono.jpg");
-    util::textures_holder_instance.loadTextureToHolder("testImage2", "assets/Square swirls.png");
-    util::textures_holder_instance.loadTextureToHolder("Test Image", "assets/Test Image.jpg");
-    //util::textures_holder_instance.loadTextureToHolder("Test Grid", "assets/testGrid.png");
-    util::textures_holder_instance.loadTextureToHolder("GroundImage", "assets/Flat-Ground-Grass.jpg");
+    util::mesh_collection_instance.loadStaticMeshToHolder("Cube", "assets/Cube.obj");
+    util::mesh_collection_instance.loadStaticMeshToHolder("Stanford Bunny", "assets/bunny.obj");
+    util::mesh_collection_instance.loadStaticMeshToHolder("House", "assets/Residential Buildings 001.obj");
+    util::mesh_collection_instance.loadStaticMeshToHolder("911GT2", "assets/Porsche_911_GT2.obj");
+    util::mesh_collection_instance.loadStaticMeshToHolder("Ground", "assets/Flat-Ground-Grass.obj");
+    util::textures_data_collection_instance.loadTextureToHolder("testImage", "assets/Shalvex Novachrono.jpg");
+    util::textures_data_collection_instance.loadTextureToHolder("testImage2", "assets/Square swirls.png");
+    util::textures_data_collection_instance.loadTextureToHolder("Test Image", "assets/0000.BMP");
+    //util::textures_data_collection_instance.loadTextureToHolder("Test Grid", "assets/testGrid.png");
+    util::textures_data_collection_instance.loadTextureToHolder("GroundImage", "assets/Flat-Ground-Grass.jpg");
     
     addGameObject(new GameObject(rw, "Camera ", 0));
     gameObjects.back()->addComponent(make_unique<Camera>());
@@ -53,20 +56,36 @@ void world_container::init() {
     
     if (Renderer* renderer = gameObjects[3]->getComponent<Renderer>()) {
         renderer->setMesh("House");
+        renderer->setTexture("testImage");
+    }
+
+
+    
+
+    gameObjects[4]->addComponent(make_unique<Renderer>());
+    gameObjects[4]->transform->setWorldPosition({-25, 10, 25});
+    
+    if (Renderer* renderer = gameObjects[4]->getComponent<Renderer>()) {
+        renderer->setMesh("911GT2");
         renderer->setTexture("Test Image");
     }
 }
 
 void world_container::update() {
     
-    if (rw->getInputRef().wasKeyJustPressed('P')) {
+    if (util::input->wasKeyJustPressed('P')) {
         gameObjects[0]->setActivity(false);
     }
 
-    if (rw->getInputRef().wasKeyJustPressed('U')) {
+    if (util::input->wasKeyJustPressed('U')) {
         gameObjects[0]->setActivity(true);
     }
 
+    if (util::input->wasKeyJustPressed(VK_DELETE)) {
+        if (gameObjects.size() > 1) {
+            gameObjects.back()->setDestroyed();
+        }
+    }
     
     for (GameObject* gameObject : gameObjects) {
         if (!gameObject->getActivity()) continue;

@@ -1,13 +1,12 @@
 #pragma once
 #include "base_component.h"
 #include "../extra_math.h"
+#include "../GameObject.h"
 
 class r_window;
-class Input;
 
 class Camera : public base_component {
 	r_window* rw = nullptr;
-	Input* input = nullptr;
 	float yaw = -90, pitch = 0;
 
 	bool freeze_toggle_mouse = false;
@@ -23,6 +22,6 @@ public:
 	void start() override;
 	void update() override;
 	void setGameObject(GameObject* gm, const int& id) override;
-	Vec3 center() const { return eye + front; }
+	Vec3 center() const;
 	Camera* clone() override;
 };
